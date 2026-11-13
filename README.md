@@ -61,7 +61,7 @@ All the examples in this guide build **Potion Lab**: a grumpy Potion Master inve
 ## Prerequisites
 
 * **Flutter SDK 3.38 or newer** (Dart 3.10 or newer). Run `flutter upgrade` to get the latest stable version.
-* **Somewhere to run it:** Chrome, a phone or a desktop app. For iOS and macOS you need Xcode, and for Android you need Android Studio.
+* **Somewhere to run it:** we recommend **Chrome**, which needs no extra setup. You can also run on a phone or as a desktop app: for iOS and macOS you need Xcode, and for Android you need Android Studio.
 * **A Firebase project**, with Gemini enabled:
     1. Open the [Firebase console](https://console.firebase.google.com/) and create a new project. Any name works.
     2. You can turn off Google Analytics.
@@ -294,7 +294,7 @@ We create the files in the order they depend on each other, so your editor never
     }
     ```
 
-Run the app with `flutter run`, type something and press send.
+Run the app with `flutter run -d chrome` (or pick another device with `flutter run`), type something and press send.
 
 > 🧠 **What just happened:** nothing magical yet, and that's the point. `HomePage` doesn't know where answers come from. Next we make `AgentService` answer with UI, and `HomePage` won't change at all.
 
