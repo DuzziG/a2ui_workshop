@@ -94,6 +94,10 @@ All the examples in this guide build **Potion Lab**: a grumpy Potion Master inve
     flutterfire configure
     ```
 
+    > **On a Mac, does it stop with `cannot load such file -- xcodeproj`?** FlutterFire needs the `xcodeproj` Ruby gem to add the iOS config to your Xcode project. Your Firebase apps were already created, so install the gem with `sudo gem install xcodeproj` and run `flutterfire configure` again, this time picking your existing project. Or skip iOS for now: select only **android** and **web**. Either way, check that `lib/firebase_options.dart` exists afterwards.
+    >
+    > **Did you create the project from here, with `<create a new project>`?** Then enable Gemini for it too: in the Firebase console, open your project, go to **AI Logic**, click **Get started** and choose the **Gemini Developer API**.
+
 3.  **Add the packages.** `a2ui_core` reads A2UI messages and keeps the state of every surface. `a2ui_flutter` draws those surfaces as Flutter widgets.
     ```sh
     flutter pub add firebase_core a2ui_flutter a2ui_core
