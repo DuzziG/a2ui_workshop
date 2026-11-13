@@ -1,7 +1,6 @@
 // lib/my_catalog.dart
 import 'package:a2ui_core/a2ui_core.dart';
 import 'package:a2ui_flutter/a2ui_flutter.dart';
-// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:json_schema_builder/json_schema_builder.dart' hide ValidationResult;
 

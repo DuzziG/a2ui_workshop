@@ -61,7 +61,7 @@ All the examples in this guide build **Potion Lab**: a grumpy Potion Master inve
 ## Prerequisites
 
 * **Flutter SDK 3.38 or newer** (Dart 3.10 or newer). Run `flutter upgrade` to get the latest stable version.
-* **Somewhere to run it.** The fastest path in a workshop is **Chrome**, which needs no extra setup. For a phone or a desktop app you also need Xcode (iOS, macOS) or Android Studio (Android).
+* **Somewhere to run it:** Chrome, a phone or a desktop app. For iOS and macOS you need Xcode, and for Android you need Android Studio.
 * **A Firebase project**, with Gemini enabled:
     1. Open the [Firebase console](https://console.firebase.google.com/) and create a new project. Any name works.
     2. You can turn off Google Analytics.
@@ -93,7 +93,12 @@ All the examples in this guide build **Potion Lab**: a grumpy Potion Master inve
     ```
     Run every command from this folder from now on.
 
-2.  **Connect it to Firebase.** Pick your project and the platforms you want. This writes `lib/firebase_options.dart`.
+2.  **Add the packages.** `firebase_core` connects the app to Firebase, so add it before you run `flutterfire configure`. `a2ui_core` reads A2UI messages and keeps the state of every surface. `a2ui_flutter` draws those surfaces as Flutter widgets.
+    ```sh
+    flutter pub add firebase_core a2ui_flutter a2ui_core
+    ```
+
+3.  **Connect it to Firebase.** Pick your project and the platforms you want. This writes `lib/firebase_options.dart`.
     ```sh
     flutterfire configure
     ```
@@ -101,11 +106,6 @@ All the examples in this guide build **Potion Lab**: a grumpy Potion Master inve
     > **On a Mac, does it stop with `cannot load such file -- xcodeproj`?** FlutterFire needs the `xcodeproj` Ruby gem to add the iOS config to your Xcode project. Your Firebase apps were already created, so install the gem with `sudo gem install xcodeproj` and run `flutterfire configure` again, this time picking your existing project. Or skip iOS for now: select only **android** and **web**. Either way, check that `lib/firebase_options.dart` exists afterwards. [More in Troubleshooting](TROUBLESHOOTING.md#2-flutterfire-configure-stops-with-cannot-load-such-file----xcodeproj).
     >
     > **Did you create the project from here, with `<create a new project>`?** Then enable Gemini for it too: in the Firebase console, open your project, go to **AI Logic**, click **Get started** and choose the **Gemini Developer API**.
-
-3.  **Add the packages.** `a2ui_core` reads A2UI messages and keeps the state of every surface. `a2ui_flutter` draws those surfaces as Flutter widgets.
-    ```sh
-    flutter pub add firebase_core a2ui_flutter a2ui_core
-    ```
 
 ## Step 3: The App Shell
 
@@ -118,39 +118,11 @@ We split the app in two, and keep it that way for the whole workshop:
 
 That way, most later steps only change the service.
 
-1.  **Replace `lib/main.dart`.** It starts Firebase, then shows the home page.
+> **About the Material import:** these files import `package:flutter/material.dart`, because that's what `a2ui_flutter` is built with. On Flutter 3.47 and newer, your editor marks that line with a blue *deprecated* hint and suggests `package:material_ui`. It's only a hint, not an error, and the app runs fine. Don't switch to `material_ui` yet: it's a separate copy of Material, and A2UI's text fields crash under it because they can't find their Material localizations.
 
-    ```dart
-    // lib/main.dart
-    import 'package:firebase_core/firebase_core.dart';
-    // ignore: deprecated_member_use
-    import 'package:flutter/material.dart';
-    import 'firebase_options.dart';
-    import 'home_page.dart';
+We create the files in the order they depend on each other, so your editor never shows an import that doesn't exist yet.
 
-    void main() async {
-      WidgetsFlutterBinding.ensureInitialized();
-      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-      runApp(const MyApp());
-    }
-
-    class MyApp extends StatelessWidget {
-      const MyApp({super.key});
-
-      @override
-      Widget build(BuildContext context) {
-        return MaterialApp(
-          title: 'My A2UI App',
-          theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
-          home: const HomePage(title: 'My A2UI App'),
-        );
-      }
-    }
-    ```
-
-    > **Why `package:flutter/material.dart`?** New Flutter projects import Material from the `material_ui` package. `a2ui_flutter` builds its widgets with `package:flutter/material.dart`, and the two are separate libraries: under a `material_ui` app, A2UI's text fields crash because they can't find their Material localizations. So use `package:flutter/material.dart` in every file. The `// ignore` comment hides its deprecation warning.
-
-2.  **Create `lib/agent_service.dart`.** For now it pretends to think and answers with text. It already owns a `MessageProcessor`, the A2UI renderer, which we use in the next step.
+1.  **Create `lib/agent_service.dart`.** For now it pretends to think and answers with text. It already owns a `MessageProcessor`, the A2UI renderer, which we use in the next step.
 
     ```dart
     // lib/agent_service.dart
@@ -172,13 +144,12 @@ That way, most later steps only change the service.
     }
     ```
 
-3.  **Create `lib/home_page.dart`.** It shows three things, top to bottom: the surfaces, the agent's text reply, and the prompt box. It subscribes to the processor, so whenever a surface is created or deleted, the screen updates.
+2.  **Create `lib/home_page.dart`.** It shows three things, top to bottom: the surfaces, the agent's text reply, and the prompt box. It subscribes to the processor, so whenever a surface is created or deleted, the screen updates.
 
     ```dart
     // lib/home_page.dart
     import 'package:a2ui_core/a2ui_core.dart';
     import 'package:a2ui_flutter/a2ui_flutter.dart';
-    // ignore: deprecated_member_use
     import 'package:flutter/material.dart';
     import 'agent_service.dart';
 
@@ -294,7 +265,36 @@ That way, most later steps only change the service.
     }
     ```
 
-Run the app (`flutter run -d chrome`), type something and press send.
+3.  **Replace `lib/main.dart`.** It starts Firebase, then shows the home page.
+
+    ```dart
+    // lib/main.dart
+    import 'package:firebase_core/firebase_core.dart';
+    import 'package:flutter/material.dart';
+    import 'firebase_options.dart';
+    import 'home_page.dart';
+
+    void main() async {
+      WidgetsFlutterBinding.ensureInitialized();
+      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+      runApp(const MyApp());
+    }
+
+    class MyApp extends StatelessWidget {
+      const MyApp({super.key});
+
+      @override
+      Widget build(BuildContext context) {
+        return MaterialApp(
+          title: 'My A2UI App',
+          theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
+          home: const HomePage(title: 'My A2UI App'),
+        );
+      }
+    }
+    ```
+
+Run the app with `flutter run`, type something and press send.
 
 > 🧠 **What just happened:** nothing magical yet, and that's the point. `HomePage` doesn't know where answers come from. Next we make `AgentService` answer with UI, and `HomePage` won't change at all.
 
@@ -1152,7 +1152,6 @@ Potion Lab draws a `PotionBottle` with a `CustomPainter`. The `fill` property is
     // lib/my_catalog.dart
     import 'package:a2ui_core/a2ui_core.dart';
     import 'package:a2ui_flutter/a2ui_flutter.dart';
-    // ignore: deprecated_member_use
     import 'package:flutter/material.dart';
     import 'package:json_schema_builder/json_schema_builder.dart' hide ValidationResult;
 
@@ -1365,7 +1364,6 @@ A component's builder can do anything a widget can, including calling another AI
     import 'package:a2ui_flutter/a2ui_flutter.dart';
     // Only what we need from firebase_ai: it has its own Schema, which would clash.
     import 'package:firebase_ai/firebase_ai.dart' show Content, FirebaseAI, GenerationConfig, ResponseModalities;
-    // ignore: deprecated_member_use
     import 'package:flutter/material.dart';
     import 'package:json_schema_builder/json_schema_builder.dart' hide ValidationResult;
 
@@ -1483,7 +1481,6 @@ A component's builder can do anything a widget can, including calling another AI
     // lib/companion.dart
     import 'dart:math';
     import 'package:a2ui_flutter/a2ui_flutter.dart';
-    // ignore: deprecated_member_use
     import 'package:flutter/material.dart' hide Material;
     import 'package:flutter_scene/scene.dart';
     import 'package:json_schema_builder/json_schema_builder.dart' hide ValidationResult;

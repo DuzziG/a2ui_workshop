@@ -53,7 +53,7 @@ Exception: .../rubygems/core_ext/kernel_require.rb:54:in `require': cannot load 
 2. Run `flutterfire configure` again and pick your **existing** project. Don't create a new one.
 3. Check that `lib/firebase_options.dart` exists. It may not have been written the first time.
 
-**Or skip iOS for now:** run `flutterfire configure` again and select only **android** and **web**. Neither needs the gem, and Chrome is the easiest way to run the workshop anyway.
+**Or skip iOS for now:** run `flutterfire configure` again and select only **android** and **web**. Neither needs the gem.
 
 **Watch out:** if you created the project from the CLI (`<create a new project>`), Gemini isn't enabled on it yet. In the [Firebase console](https://console.firebase.google.com/), open your project, go to **AI Logic**, click **Get started** and choose the **Gemini Developer API**. Otherwise your first Gemini call in Step 6 fails.
 

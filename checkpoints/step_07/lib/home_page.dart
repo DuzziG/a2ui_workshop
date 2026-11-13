@@ -1,7 +1,6 @@
 // lib/home_page.dart
 import 'package:a2ui_core/a2ui_core.dart';
 import 'package:a2ui_flutter/a2ui_flutter.dart';
-// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'agent_service.dart';
 

@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:a2ui_flutter/a2ui_flutter.dart';
 // Only what we need from firebase_ai: it has its own Schema, which would clash.
 import 'package:firebase_ai/firebase_ai.dart' show Content, FirebaseAI, GenerationConfig, ResponseModalities;
-// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:json_schema_builder/json_schema_builder.dart' hide ValidationResult;
 

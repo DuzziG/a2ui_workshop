@@ -1,7 +1,6 @@
 // lib/companion.dart
 import 'dart:math';
 import 'package:a2ui_flutter/a2ui_flutter.dart';
-// ignore: deprecated_member_use
 import 'package:flutter/material.dart' hide Material;
 import 'package:flutter_scene/scene.dart';
 import 'package:json_schema_builder/json_schema_builder.dart' hide ValidationResult;
