@@ -23,7 +23,7 @@ Two things make A2UI safe and fun to build with:
 
 ## What you will learn
 
-* **Part 1, Set up:** a Flutter app with Firebase and the A2UI packages.
+* **Part 1, Set up:** a Flutter app with the A2UI packages, chatting with Gemini.
 * **Part 2, Speak A2UI:** write A2UI by hand first, so you know exactly what the AI will write later: surfaces, components, the data model, data binding and actions.
 * **Part 3, Hand the AI the pen:** let Gemini write the UI, give it a personality, show it photos, send button presses back to it, and give it functions so your code makes the rules.
 * **Part 4, Make it truly yours:** design and draw your own component, and stream the UI in as Gemini writes it.
@@ -31,7 +31,7 @@ Two things make A2UI safe and fun to build with:
 
 > **Something not working?** Check [Troubleshooting](TROUBLESHOOTING.md) for the problems we've already hit.
 >
-> **Stuck?** The [`checkpoints`](checkpoints) folder holds the complete `lib/` folder at the end of every step. Copy one over yours, but keep your own `lib/firebase_options.dart`.
+> **Stuck?** The [`checkpoints`](checkpoints) folder holds the complete `lib/` folder at the end of every step. Copy one over yours: your `lib/api_key.dart` isn't in them, so it stays.
 
 ---
 
@@ -62,27 +62,20 @@ All the examples in this guide build **Potion Lab**: a grumpy Potion Master inve
 
 * **Flutter SDK 3.38 or newer** (Dart 3.10 or newer). Run `flutter upgrade` to get the latest stable version.
 * **Somewhere to run it:** we recommend **Chrome**, which needs no extra setup. You can also run on a phone or as a desktop app: for iOS and macOS you need Xcode, and for Android you need Android Studio.
-* **A Firebase project**, with Gemini enabled:
-    1. Open the [Firebase console](https://console.firebase.google.com/) and create a new project. Any name works.
-    2. You can turn off Google Analytics.
-    3. Open **AI Logic** and click **Get started**. Two providers appear: under **Gemini Developer API**, the free one on the left, click **Get started with this API**. Don't pick the **Agent Platform Gemini API**: it needs billing, and the workshop code doesn't use it.
+* **A Google account**, to get a free Gemini API key in Step 1.
 
-## Step 1: Install the Command Line Tools
+## Step 1: Get Your Gemini API Key
 
-1.  **Install the Firebase CLI.** This needs `npm`, which comes with Node.js. [docs](https://firebase.google.com/docs/cli#mac-linux-npm)
-    ```sh
-    npm install -g firebase-tools
-    ```
-2.  **Log into Firebase:**
-    ```sh
-    firebase login
-    ```
-3.  **Install the FlutterFire CLI:** [docs](https://firebase.google.com/docs/flutter/setup)
-    ```sh
-    dart pub global activate flutterfire_cli
-    ```
+> 🎯 **Goal:** a key that lets your app talk to Gemini. It takes about a minute.
 
-    > **`flutterfire: command not found`?** The command was installed in a folder your terminal doesn't search yet. Add it to your `PATH` and open a new terminal, as shown in [Troubleshooting](TROUBLESHOOTING.md#1-flutterfire-is-not-found-after-installing-it). Or, for now, run `dart pub global run flutterfire_cli:flutterfire configure` in place of `flutterfire configure`.
+1.  Open **[Google AI Studio](https://aistudio.google.com/apikey)** and sign in with your Google account.
+2.  Click **Create API key**, and copy the key.
+
+That's the whole setup: no project to configure and no command line tools to install. The free tier is plenty for this workshop.
+
+> **Can't open AI Studio?** School and work accounts sometimes have it switched off. Use a personal Google account instead.
+
+> **Keep your key private.** Anyone who has it can use your quota. Don't post it, and don't push it to GitHub: the next step keeps it in a file that Git ignores.
 
 ## Step 2: Create Your Project
 
@@ -93,23 +86,35 @@ All the examples in this guide build **Potion Lab**: a grumpy Potion Master inve
     ```
     Run every command from this folder from now on.
 
-2.  **Add the packages.** `firebase_core` connects the app to Firebase, so add it before you run `flutterfire configure`. `firebase_app_check` proves to Firebase that requests come from your app. `a2ui_core` reads A2UI messages and keeps the state of every surface. `a2ui_flutter` draws those surfaces as Flutter widgets.
+2.  **Add the packages.** All of them at once, so you won't stop for installs later:
     ```sh
-    flutter pub add firebase_core firebase_app_check a2ui_flutter a2ui_core
+    flutter pub add a2ui_flutter a2ui_core a2ui_agent dartantic_ai image_picker json_schema_builder
     ```
 
-3.  **Connect it to Firebase.** Pick your project and the platforms you want. This writes `lib/firebase_options.dart`.
-    ```sh
-    flutterfire configure
-    ```
+    | Package | What it does |
+    | ------- | ------------ |
+    | `a2ui_core` | Reads A2UI messages and keeps the state of every surface |
+    | `a2ui_flutter` | Draws those surfaces as Flutter widgets |
+    | `a2ui_agent` | Teaches Gemini A2UI, and checks what it writes |
+    | `dartantic_ai` | Talks to Gemini |
+    | `image_picker` | Picks photos to show Gemini (Step 8) |
+    | `json_schema_builder` | Describes your own components to Gemini (Step 11) |
 
-    > **On a Mac, does it stop with `cannot load such file -- xcodeproj`?** FlutterFire needs the `xcodeproj` Ruby gem to add the iOS config to your Xcode project. Your Firebase apps were already created, so install the gem with `sudo gem install xcodeproj` and run `flutterfire configure` again, this time picking your existing project. Or skip iOS for now: select only **android** and **web**. Either way, check that `lib/firebase_options.dart` exists afterwards. [More in Troubleshooting](TROUBLESHOOTING.md#2-flutterfire-configure-stops-with-cannot-load-such-file----xcodeproj).
-    >
-    > **Did you create the project from here, with `<create a new project>`?** Then enable Gemini for it too: in the Firebase console, open your project, go to **AI Logic**, click **Get started** and choose the **Gemini Developer API**.
+3.  **Save your API key.** Create `lib/api_key.dart` and paste your key into it:
+    ```dart
+    // lib/api_key.dart
+    // Your Gemini API key, from https://aistudio.google.com/apikey
+    // Keep it private: never commit it or share it.
+    const geminiApiKey = 'PASTE-YOUR-API-KEY-HERE';
+    ```
+    Then tell Git to ignore that file, so your key never ends up on GitHub:
+    ```sh
+    echo "lib/api_key.dart" >> .gitignore
+    ```
 
 ## Step 3: The App Shell
 
-> 🎯 **Goal:** an app with a prompt box that talks to a placeholder agent.
+> 🎯 **Goal:** an app with a prompt box that chats with Gemini.
 
 We split the app in two, and keep it that way for the whole workshop:
 
@@ -122,22 +127,36 @@ That way, most later steps only change the service.
 
 We create the files in the order they depend on each other, so your editor never shows an import that doesn't exist yet.
 
-1.  **Create `lib/agent_service.dart`.** For now it pretends to think and answers with text. It already owns a `MessageProcessor`, the A2UI renderer, which we use in the next step.
+1.  **Create `lib/agent_service.dart`.** It sends your messages to Gemini and returns its answers. It keeps the conversation in `_history`, so Gemini remembers what you said. The first message in it is a **system message**: instructions that tell Gemini how to behave. The service also owns a `MessageProcessor`, the A2UI renderer, which we use in the next step.
 
     ```dart
     // lib/agent_service.dart
     import 'package:a2ui_core/a2ui_core.dart';
     import 'package:a2ui_flutter/a2ui_flutter.dart';
     import 'package:a2ui_flutter/basic_catalog.dart';
+    import 'package:dartantic_ai/dartantic_ai.dart';
+    import 'api_key.dart';
 
     class AgentService {
       // The renderer: it applies A2UI messages and remembers every surface.
       final processor = MessageProcessor<ComponentImplementation>(catalogs: [basicCatalog()]);
 
+      // Gemini, reached with your API key.
+      final _gemini = Agent.forProvider(GoogleProvider(apiKey: geminiApiKey), chatModelName: 'gemini-3.6-flash');
+
+      // The conversation so far. The system message tells Gemini how to behave.
+      final List<ChatMessage> _history = [
+        ChatMessage.system('You are a friendly assistant. Answer in one or two short sentences.'),
+      ];
+
       Future<String> send(String prompt) async {
-        // Pretend to think for a second.
-        await Future.delayed(const Duration(seconds: 1));
-        return 'You said "$prompt". Soon I will answer with real UI!';
+        try {
+          final result = await _gemini.send(prompt, history: _history);
+          _history.addAll(result.messages); // Remember this turn.
+          return result.output;
+        } catch (e) {
+          return 'Error: $e';
+        }
       }
 
       void dispose() => processor.dispose();
@@ -265,62 +284,40 @@ We create the files in the order they depend on each other, so your editor never
     }
     ```
 
-3.  **Create an App Check debug token.** Firebase only answers Gemini requests that come with a valid App Check token. While you develop, a **debug token** stands in for the real check.
-
-    1. In the [Firebase console](https://console.firebase.google.com/), open your project and go to **App Check**, then the **Apps** tab.
-    2. Click the **⋮** menu next to your **web** app and choose **Manage debug tokens**.
-    3. Click **Add debug token**, then **Generate token**, give it a name and save it. Copy the token.
-    4. Add the **same token** to every other app you'll run on (android, ios), the same way.
-
-    > **Keep the token private.** Anyone who has it can use your Gemini quota. Don't post it or push it to a public repo, and delete it in the console after the workshop.
-
-4.  **Replace `lib/main.dart`.** It starts Firebase, turns on App Check with your debug token, then shows the home page. Paste your token into `appCheckDebugToken`.
+3.  **Replace `lib/main.dart`.** It shows the home page, or a reminder if you haven't pasted your API key yet.
 
     ```dart
     // lib/main.dart
-    import 'package:firebase_app_check/firebase_app_check.dart';
-    import 'package:firebase_core/firebase_core.dart';
     import 'package:flutter/material.dart';
-    import 'firebase_options.dart';
+    import 'api_key.dart';
     import 'home_page.dart';
 
-    // Your App Check debug token, from the Firebase console:
-    // App Check > Apps > ⋮ next to your app > Manage debug tokens > Add debug token.
-    // Keep it private: anyone who has it can use your Gemini quota.
-    const appCheckDebugToken = 'PASTE-YOUR-DEBUG-TOKEN-HERE';
-
-    void main() async {
-      WidgetsFlutterBinding.ensureInitialized();
-      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-      // App Check proves that requests to Gemini come from your app.
-      // While you develop, the debug providers use your debug token.
-      await FirebaseAppCheck.instance.activate(
-        providerWeb: WebDebugProvider(debugToken: appCheckDebugToken),
-        providerAndroid: const AndroidDebugProvider(debugToken: appCheckDebugToken),
-        providerApple: const AppleDebugProvider(debugToken: appCheckDebugToken),
-      );
-      runApp(const MyApp());
-    }
+    void main() => runApp(const MyApp());
 
     class MyApp extends StatelessWidget {
       const MyApp({super.key});
 
       @override
       Widget build(BuildContext context) {
+        final hasKey = geminiApiKey.isNotEmpty && !geminiApiKey.startsWith('PASTE');
         return MaterialApp(
           title: 'My A2UI App',
           theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
-          home: const HomePage(title: 'My A2UI App'),
+          home: hasKey
+              ? const HomePage(title: 'My A2UI App')
+              : const Scaffold(body: Center(child: Text('Paste your Gemini API key into lib/api_key.dart, then restart the app.'))),
         );
       }
     }
     ```
 
-Run the app with `flutter run -d chrome` (or pick another device with `flutter run`), type something and press send.
+Run the app with `flutter run -d chrome` (or pick another device with `flutter run`). Say hello: Gemini answers.
 
-> 🧠 **What just happened:** nothing magical yet, and that's the point. `HomePage` doesn't know where answers come from. Next we make `AgentService` answer with UI, and `HomePage` won't change at all.
+> **Getting `API key not valid` or another error?** Check [Troubleshooting](TROUBLESHOOTING.md) now, before you go on. If Gemini answers here, the rest of the workshop will work too.
 
-> 🎨 **Make it yours:** rename the app in `main.dart`, pick a `seedColor` that fits your idea, and change the prompt box's hint text.
+> 🧠 **What just happened:** your app is chatting with Gemini, but only in text. `HomePage` doesn't know where answers come from. Next we add UI to the answers, and `HomePage` won't change at all.
+
+> 🎨 **Make it yours:** rename the app in `main.dart`, pick a `seedColor` that fits your idea, and change the prompt box's hint text. Then change the system message in `agent_service.dart`, and see how Gemini's answers change.
 
 ---
 
@@ -330,7 +327,7 @@ Before an AI writes A2UI, you will write it yourself. Then, when Gemini does it,
 
 ## Step 4: Your First Surface, by Hand
 
-> 🎯 **Goal:** draw a card from JSON you write yourself.
+> 🎯 **Goal:** Gemini still writes the text answer. Next to it, draw a card from JSON you write yourself.
 
 A **surface** is one self-contained piece of UI, like a card in a chat. You build it with **messages**:
 
@@ -346,13 +343,15 @@ root (Card)
      └─ footer (Text)
 ```
 
-**Update `lib/agent_service.dart`:**
+**Update `lib/agent_service.dart`.** `send` still asks Gemini for its answer (now in `_ask`), and then calls `_draw`, which draws a card you wrote by hand:
 
 ```dart
 // lib/agent_service.dart
 import 'package:a2ui_core/a2ui_core.dart';
 import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:a2ui_flutter/basic_catalog.dart';
+import 'package:dartantic_ai/dartantic_ai.dart';
+import 'api_key.dart';
 
 class AgentService {
   // The renderer: it applies A2UI messages and remembers every surface.
@@ -360,10 +359,33 @@ class AgentService {
 
   int _surfaceCount = 0;
 
-  Future<String> send(String prompt) async {
-    // Pretend to think for a second.
-    await Future.delayed(const Duration(seconds: 1));
+  // Gemini, reached with your API key.
+  final _gemini = Agent.forProvider(GoogleProvider(apiKey: geminiApiKey), chatModelName: 'gemini-3.6-flash');
 
+  // The conversation so far. The system message tells Gemini how to behave.
+  final List<ChatMessage> _history = [
+    ChatMessage.system('You are a friendly assistant. Answer in one or two short sentences.'),
+  ];
+
+  Future<String> send(String prompt) async {
+    final reply = await _ask(prompt); // Gemini writes the text...
+    _draw(prompt); // ...and you draw the UI, by hand.
+    return reply;
+  }
+
+  // Asks Gemini for a text answer.
+  Future<String> _ask(String prompt) async {
+    try {
+      final result = await _gemini.send(prompt, history: _history);
+      _history.addAll(result.messages); // Remember this turn.
+      return result.output;
+    } catch (e) {
+      return 'Error: $e';
+    }
+  }
+
+  // Draws a card that you wrote by hand, in JSON.
+  void _draw(String prompt) {
     // Every surface needs its own id.
     final surfaceId = 'card_${_surfaceCount++}';
 
@@ -392,15 +414,13 @@ class AgentService {
         },
       },
     ]);
-
-    return 'Here is a card I wrote by hand.';
   }
 
   void dispose() => processor.dispose();
 }
 ```
 
-Run the app and send anything. A card appears.
+Run the app and send anything. Gemini answers, and your card appears.
 
 > 🧠 **What just happened:** you didn't write a single widget. You described a card, and `a2ui_flutter` turned it into a Material `Card`, `Column`, `Row`, `Icon` and `Text`. Texts can use a little Markdown: a line starting with `## ` becomes a heading.
 
@@ -416,13 +436,15 @@ Every surface has a **data model**: a JSON object that belongs to the surface. C
 * `formatString` builds a text from several values, such as `'Hello ${/user/name}'`.
 * A Button has an **action**. Pressing it emits an event with a name and a `context` read from the data model.
 
-1.  **Update `lib/agent_service.dart`.** There is a new message, `updateDataModel`, which fills the data model.
+1.  **Update `lib/agent_service.dart`.** Only `_draw` changes. There is a new message, `updateDataModel`, which fills the data model.
 
     ```dart
     // lib/agent_service.dart
     import 'package:a2ui_core/a2ui_core.dart';
     import 'package:a2ui_flutter/a2ui_flutter.dart';
     import 'package:a2ui_flutter/basic_catalog.dart';
+    import 'package:dartantic_ai/dartantic_ai.dart';
+    import 'api_key.dart';
 
     class AgentService {
       // The renderer: it applies A2UI messages and remembers every surface.
@@ -430,10 +452,33 @@ Every surface has a **data model**: a JSON object that belongs to the surface. C
 
       int _surfaceCount = 0;
 
-      Future<String> send(String prompt) async {
-        // Pretend to think for a second.
-        await Future.delayed(const Duration(seconds: 1));
+      // Gemini, reached with your API key.
+      final _gemini = Agent.forProvider(GoogleProvider(apiKey: geminiApiKey), chatModelName: 'gemini-3.6-flash');
 
+      // The conversation so far. The system message tells Gemini how to behave.
+      final List<ChatMessage> _history = [
+        ChatMessage.system('You are a friendly assistant. Answer in one or two short sentences.'),
+      ];
+
+      Future<String> send(String prompt) async {
+        final reply = await _ask(prompt); // Gemini writes the text...
+        _draw(prompt); // ...and you draw the UI, by hand.
+        return reply;
+      }
+
+      // Asks Gemini for a text answer.
+      Future<String> _ask(String prompt) async {
+        try {
+          final result = await _gemini.send(prompt, history: _history);
+          _history.addAll(result.messages); // Remember this turn.
+          return result.output;
+        } catch (e) {
+          return 'Error: $e';
+        }
+      }
+
+      // Draws a form that you wrote by hand, in JSON.
+      void _draw(String prompt) {
         // Every surface needs its own id.
         final surfaceId = 'card_${_surfaceCount++}';
 
@@ -495,8 +540,6 @@ Every surface has a **data model**: a JSON object that belongs to the surface. C
             },
           },
         ]);
-
-        return 'Try the form: the preview follows your input.';
       }
 
       void dispose() => processor.dispose();
@@ -538,12 +581,7 @@ How does Gemini learn A2UI? The `a2ui_agent` package handles both sides:
 * `A2uiGenerator` writes a **prompt snippet** that teaches the model the A2UI rules and every component in your catalog, with each property described as a JSON schema.
 * `StreamedAnswer` reads Gemini's reply. Text goes back to the page, and every `<a2ui-json>` block is checked against your catalog and handed to the processor. Anything that breaks the rules is rejected instead of drawn.
 
-1.  **Add the packages:**
-    ```sh
-    flutter pub add firebase_ai a2ui_agent
-    ```
-
-2.  **Update `lib/agent_service.dart`.** The hand-written messages are gone. Gemini writes them now.
+1.  **Update `lib/agent_service.dart`.** The hand-written messages are gone: Gemini writes them now. The system message now holds the prompt snippet, so Gemini learns A2UI before your first message.
 
     ```dart
     // lib/agent_service.dart
@@ -551,7 +589,8 @@ How does Gemini learn A2UI? The `a2ui_agent` package handles both sides:
     import 'package:a2ui_core/a2ui_core.dart';
     import 'package:a2ui_flutter/a2ui_flutter.dart';
     import 'package:a2ui_flutter/basic_catalog.dart';
-    import 'package:firebase_ai/firebase_ai.dart';
+    import 'package:dartantic_ai/dartantic_ai.dart';
+    import 'api_key.dart';
 
     class AgentService {
       // 1. The catalog: every component the app can draw.
@@ -569,19 +608,20 @@ How does Gemini learn A2UI? The `a2ui_agent` package handles both sides:
         A2uiRendererCapabilities.forCatalogIds([BasicCatalog.v1_0Id], version: A2uiProtocolVersion.v1_0),
       );
 
-      // 4. The model, with the A2UI rules as its system instruction.
-      late final _model = FirebaseAI.googleAI().generativeModel(
-        model: 'gemini-3.6-flash',
-        systemInstruction: Content.system(_a2uiAgent.promptSnippet),
-      );
+      // 4. Gemini, reached with your API key.
+      final _gemini = Agent.forProvider(GoogleProvider(apiKey: geminiApiKey), chatModelName: 'gemini-3.6-flash');
+
+      // 5. The conversation so far. The system message now holds the A2UI rules.
+      late final List<ChatMessage> _history = [ChatMessage.system(_a2uiAgent.promptSnippet)];
 
       // The last raw reply from Gemini, for the X-ray view.
       String lastRawReply = '';
 
       Future<String> send(String prompt) async {
         try {
-          final response = await _model.generateContent([Content.text(prompt)]);
-          return _render(response.text ?? '');
+          final result = await _gemini.send(prompt, history: _history);
+          _history.addAll(result.messages); // Remember this turn.
+          return _render(result.output);
         } catch (e) {
           return 'Error: $e';
         }
@@ -608,7 +648,7 @@ How does Gemini learn A2UI? The `a2ui_agent` package handles both sides:
     }
     ```
 
-3.  **Add an X-ray view to `lib/home_page.dart`.** It shows Gemini's raw reply, so you can see the JSON behind the UI. Add a `_showXray` field to the state class:
+2.  **Add an X-ray view to `lib/home_page.dart`.** It shows Gemini's raw reply, so you can see the JSON behind the UI. Add a `_showXray` field to the state class:
 
     ```dart
       bool _isLoading = false;
@@ -657,8 +697,6 @@ Run it and ask for anything:
 
 Then press the **X-ray** button `</>` and read the reply.
 
-> **Getting `Firebase AI Logic API has not been used in project ...`?** Gemini isn't switched on for your Firebase project yet. In the Firebase console, open **AI Logic**, click **Get started**, choose the **Gemini Developer API**, then wait a few minutes and try again. [More in Troubleshooting](TROUBLESHOOTING.md#4-firebase-ai-logic-api-has-not-been-used-in-project--or-it-is-disabled).
-
 > 🧠 **What just happened:** Gemini wrote the same kinds of messages you wrote in Steps 4 and 5, wrapped in `<a2ui-json>` tags with some text around them. The prompt snippet taught it the format, and your catalog limited it to components your app can draw.
 
 > 🎨 **Make it yours:** ask for UI from *your* idea, and use X-ray to see how Gemini built it. Ask for something the basic catalog can't really do, such as a chess board or a chart. How does Gemini get by?
@@ -667,9 +705,9 @@ Then press the **X-ray** button `</>` and read the reply.
 
 > 🎯 **Goal:** turn a general assistant into *your* app.
 
-A system instruction tells the model who it is. With A2UI, you can describe its **UI** as well as its tone: which surfaces it shows, what goes in them, and how they are laid out.
+The system message tells the model who it is. With A2UI, you can describe its **UI** as well as its tone: which surfaces it shows, what goes in them, and how they are laid out.
 
-**Update `lib/agent_service.dart`.** Add a persona, and put it before the A2UI rules in the system instruction. The rest of the file stays the same.
+**Update `lib/agent_service.dart`.** Add a persona, and put it before the A2UI rules in the system message. The rest of the file stays the same.
 
 ```dart
   // 4. YOUR idea: who the agent is, and what its UI looks like.
@@ -686,11 +724,12 @@ Always answer with one short sentence in character, and exactly one new A2UI sur
 Give every new surface a new surfaceId. Never answer with text only.
 ''';
 
-  // 5. The model: your persona first, then the A2UI rules.
-  late final _model = FirebaseAI.googleAI().generativeModel(
-    model: 'gemini-3.6-flash',
-    systemInstruction: Content.system('$_persona\n${_a2uiAgent.promptSnippet}'),
-  );
+  // 5. Gemini, reached with your API key.
+  final _gemini = Agent.forProvider(GoogleProvider(apiKey: geminiApiKey), chatModelName: 'gemini-3.6-flash');
+
+  // 6. The conversation so far. The system message holds your persona first,
+  //    then the A2UI rules.
+  late final List<ChatMessage> _history = [ChatMessage.system('$_persona\n${_a2uiAgent.promptSnippet}')];
 ```
 
 Run it and tell the Potion Master how you feel: *"I have an exam tomorrow"*, *"I'm hungry"*, *"my cat ignores me"*.
@@ -710,22 +749,19 @@ Run it and tell the Potion Master how you feel: *"I have an exam tomorrow"*, *"I
 
 Gemini is **multimodal**: it understands images as well as text. One message can carry both.
 
-1.  **Add the image picker:**
-    ```sh
-    flutter pub add image_picker
-    ```
-    On iOS, add `NSPhotoLibraryUsageDescription` to `ios/Runner/Info.plist`. On macOS, add the `com.apple.security.files.user-selected.read-only` entitlement. On the web and Android there is nothing to set up. See the [image_picker docs](https://pub.dev/packages/image_picker) for details.
+1.  **Set up the image picker**, which you added in Step 2. On the web and Android there is nothing to do. On iOS, add `NSPhotoLibraryUsageDescription` to `ios/Runner/Info.plist`. On macOS, add the `com.apple.security.files.user-selected.read-only` entitlement. See the [image_picker docs](https://pub.dev/packages/image_picker) for details.
 
-2.  **Update `lib/agent_service.dart`.** Both kinds of message now go through one `_generate` method, and `sendPhoto` sends the picture with a short instruction. We also tell the persona what to do with photos. Note the `hide TextPart`: `firebase_ai` and `a2ui_agent` both have a class with that name, and here we want Firebase's.
+2.  **Update `lib/agent_service.dart`.** Both kinds of message now go through one `_generate` method. `sendPhoto` attaches the picture to a short instruction as a `DataPart`: the photo's bytes and their type. We also tell the persona what to do with photos.
 
     ```dart
     // lib/agent_service.dart
     import 'dart:typed_data';
-    import 'package:a2ui_agent/a2ui_agent.dart' hide TextPart; // firebase_ai has its own TextPart
+    import 'package:a2ui_agent/a2ui_agent.dart';
     import 'package:a2ui_core/a2ui_core.dart';
     import 'package:a2ui_flutter/a2ui_flutter.dart';
     import 'package:a2ui_flutter/basic_catalog.dart';
-    import 'package:firebase_ai/firebase_ai.dart';
+    import 'package:dartantic_ai/dartantic_ai.dart';
+    import 'api_key.dart';
 
     class AgentService {
       // 1. The catalog: every component the app can draw.
@@ -758,30 +794,30 @@ Gemini is **multimodal**: it understands images as well as text. One message can
     Give every new surface a new surfaceId. Never answer with text only.
     ''';
 
-      // 5. The model: your persona first, then the A2UI rules.
-      late final _model = FirebaseAI.googleAI().generativeModel(
-        model: 'gemini-3.6-flash',
-        systemInstruction: Content.system('$_persona\n${_a2uiAgent.promptSnippet}'),
-      );
+      // 5. Gemini, reached with your API key.
+      final _gemini = Agent.forProvider(GoogleProvider(apiKey: geminiApiKey), chatModelName: 'gemini-3.6-flash');
+
+      // 6. The conversation so far. The system message holds your persona first,
+      //    then the A2UI rules.
+      late final List<ChatMessage> _history = [ChatMessage.system('$_persona\n${_a2uiAgent.promptSnippet}')];
 
       // The last raw reply from Gemini, for the X-ray view.
       String lastRawReply = '';
 
-      Future<String> send(String prompt) => _generate(Content.text(prompt));
+      Future<String> send(String prompt) => _generate(prompt);
 
-      // A photo plus a short instruction, in one message.
+      // A photo, attached to a short instruction.
       Future<String> sendPhoto(Uint8List bytes, String mimeType) => _generate(
-        Content.multi([
-          TextPart('Here is a photo. Make a potion from what you see.'),
-          InlineDataPart(mimeType, bytes),
-        ]),
+        'Here is a photo. Make a potion from what you see.',
+        [DataPart(bytes, mimeType: mimeType)],
       );
 
-      // Sends one message to Gemini and draws the reply.
-      Future<String> _generate(Content content) async {
+      // Sends one message to Gemini, with any attachments, and draws the reply.
+      Future<String> _generate(String prompt, [List<Part> attachments = const []]) async {
         try {
-          final response = await _model.generateContent([content]);
-          return _render(response.text ?? '');
+          final result = await _gemini.send(prompt, history: _history, attachments: attachments);
+          _history.addAll(result.messages); // Remember this turn.
+          return _render(result.output);
         } catch (e) {
           return 'Error: $e';
         }
@@ -830,7 +866,7 @@ Gemini is **multimodal**: it understands images as well as text. One message can
 
 Run it and send a photo of anything: your shoe, your lunch, your neighbor's cat.
 
-> 🧠 **What just happened:** `Content.multi` puts text and image parts in one message. Gemini looked at the picture, and your persona told it what to make of it.
+> 🧠 **What just happened:** the photo travelled as an attachment, in the same message as the text. Gemini looked at the picture, and your persona told it what to make of it.
 
 > 🎨 **Make it yours:** decide what a photo *means* in your app. In a Dungeon Master, the photo becomes the next room. In a Fridge Chef, it's the ingredients. In an Outfit Judge, it's the whole point. Update the persona and the text in `sendPhoto`. To use the camera on a phone, try `ImageSource.camera`.
 
@@ -840,10 +876,7 @@ Run it and send a photo of anything: your shoe, your lunch, your neighbor's cat.
 
 So far, UI only flows one way. Remember the action from Step 5? Now we send it to Gemini as the next message, and Gemini answers by **updating the surface it already made**. That turns a chat into an app.
 
-Two things are needed:
-
-* A **chat session** (`startChat`), so Gemini remembers the surfaces it created.
-* The action as **JSON**, with the surface's current data model beside it, so Gemini knows what was pressed and what the user entered.
+Gemini already remembers the conversation (that's `_history`, from Step 3), so it knows which surfaces it created. What's missing is the action itself. We send it as **JSON**, with the surface's current data model beside it, so Gemini knows what was pressed and what the user entered.
 
 1.  **Update `lib/agent_service.dart`.** The persona explains the action messages and how to answer them, and `sendAction` sends them.
 
@@ -851,11 +884,12 @@ Two things are needed:
     // lib/agent_service.dart
     import 'dart:convert';
     import 'dart:typed_data';
-    import 'package:a2ui_agent/a2ui_agent.dart' hide TextPart; // firebase_ai has its own TextPart
+    import 'package:a2ui_agent/a2ui_agent.dart';
     import 'package:a2ui_core/a2ui_core.dart';
     import 'package:a2ui_flutter/a2ui_flutter.dart';
     import 'package:a2ui_flutter/basic_catalog.dart';
-    import 'package:firebase_ai/firebase_ai.dart';
+    import 'package:dartantic_ai/dartantic_ai.dart';
+    import 'api_key.dart';
 
     class AgentService {
       // 1. The catalog: every component the app can draw.
@@ -893,43 +927,41 @@ Two things are needed:
     add a Text that tells what happened when the user drank the potion. Do not create a new surface for it.
     ''';
 
-      // 5. The model: your persona first, then the A2UI rules.
-      late final _model = FirebaseAI.googleAI().generativeModel(
-        model: 'gemini-3.6-flash',
-        systemInstruction: Content.system('$_persona\n${_a2uiAgent.promptSnippet}'),
-      );
+      // 5. Gemini, reached with your API key.
+      final _gemini = Agent.forProvider(GoogleProvider(apiKey: geminiApiKey), chatModelName: 'gemini-3.6-flash');
 
-      // 6. A chat remembers the conversation, so Gemini knows which surfaces it made.
-      late final _chat = _model.startChat();
+      // 6. The conversation so far. The system message holds your persona first,
+      //    then the A2UI rules.
+      late final List<ChatMessage> _history = [ChatMessage.system('$_persona\n${_a2uiAgent.promptSnippet}')];
 
       // The last raw reply from Gemini, for the X-ray view.
       String lastRawReply = '';
 
-      Future<String> send(String prompt) => _generate(Content.text(prompt));
+      Future<String> send(String prompt) => _generate(prompt);
 
-      // A photo plus a short instruction, in one message.
+      // A photo, attached to a short instruction.
       Future<String> sendPhoto(Uint8List bytes, String mimeType) => _generate(
-        Content.multi([
-          TextPart('Here is a photo. Make a potion from what you see.'),
-          InlineDataPart(mimeType, bytes),
-        ]),
+        'Here is a photo. Make a potion from what you see.',
+        [DataPart(bytes, mimeType: mimeType)],
       );
 
       // A button press inside a surface, sent back to Gemini as JSON.
       Future<String> sendAction(A2uiRendererAction action) {
         final dataModel = processor.getRendererDataModel();
-        final message = jsonEncode({
-          'a2ui': RendererToAgentMessagePayload.of(ActionMessage(version: '1.0', action: action)).toJson(),
-          if (dataModel != null) 'metadata': {'a2uiRendererDataModel': dataModel},
-        });
-        return _generate(Content.text(message));
+        return _generate(
+          jsonEncode({
+            'a2ui': RendererToAgentMessagePayload.of(ActionMessage(version: '1.0', action: action)).toJson(),
+            if (dataModel != null) 'metadata': {'a2uiRendererDataModel': dataModel},
+          }),
+        );
       }
 
-      // Sends one message to Gemini and draws the reply.
-      Future<String> _generate(Content content) async {
+      // Sends one message to Gemini, with any attachments, and draws the reply.
+      Future<String> _generate(String prompt, [List<Part> attachments = const []]) async {
         try {
-          final response = await _chat.sendMessage(content);
-          return _render(response.text ?? '');
+          final result = await _gemini.send(prompt, history: _history, attachments: attachments);
+          _history.addAll(result.messages); // Remember this turn.
+          return _render(result.output);
         } catch (e) {
           return 'Error: $e';
         }
@@ -988,20 +1020,21 @@ The message Gemini receives looks like this:
 
 Ask a model to "roll a die" and it will happily pick whatever number makes a good story. Ask it what's in stock and it will invent things. **Function calling** fixes that: you give Gemini functions written in Dart, and it calls them when it needs a real answer.
 
-With `AutoFunctionDeclaration`, the chat session runs your function, hands the result to Gemini, and Gemini carries on, all inside one `sendMessage` call.
+Each function is a `Tool`: a name, a description, a schema for its inputs, and `onCall`, the Dart code that runs. When Gemini asks for one, `dartantic_ai` runs it, hands the result back to Gemini, and Gemini carries on, all inside one `send` call.
 
-**Update `lib/agent_service.dart`.** Add the functions and pass them to the model with `tools`. The persona tells Gemini when to call them. Every call is logged into the X-ray view, so you can watch it happen.
+**Update `lib/agent_service.dart`.** Add the functions and pass them to the agent with `tools`. The persona tells Gemini when to call them. Every call is logged into the X-ray view, so you can watch it happen.
 
 ```dart
 // lib/agent_service.dart
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:a2ui_agent/a2ui_agent.dart' hide TextPart; // firebase_ai has its own TextPart
+import 'package:a2ui_agent/a2ui_agent.dart';
 import 'package:a2ui_core/a2ui_core.dart';
 import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:a2ui_flutter/basic_catalog.dart';
-import 'package:firebase_ai/firebase_ai.dart';
+import 'package:dartantic_ai/dartantic_ai.dart';
+import 'api_key.dart';
 
 class AgentService {
   // 1. The catalog: every component the app can draw.
@@ -1042,77 +1075,78 @@ add a Text that tells the roll and what happened when the user drank the potion.
 ''';
 
   // 5. YOUR rules: functions that your code decides, not the AI.
-  //    Gemini asks to call them, the chat runs them, and Gemini reads the result.
+  //    Gemini asks to call them, the agent runs them, and Gemini reads the result.
   static const _shelf = ['dragon scale', 'moonlight', 'frog giggle', 'cinnamon', 'thunder in a jar', 'unicorn hair'];
   final _random = Random();
 
   late final _tools = [
-    Tool.functionDeclarations([
-      AutoFunctionDeclaration(
-        name: 'rollDice',
-        description: 'Rolls a die and returns the number it lands on.',
-        parameters: {'sides': Schema.integer(description: 'How many sides the die has, such as 20.')},
-        callable: (args) {
-          final sides = (args['sides'] as num?)?.toInt() ?? 20;
-          final roll = _random.nextInt(sides) + 1;
-          _toolLog.add('rollDice(sides: $sides) -> $roll');
-          return {'roll': roll};
-        },
+    Tool<Map<String, dynamic>>(
+      name: 'rollDice',
+      description: 'Rolls a die and returns the number it lands on.',
+      inputSchema: S.object(
+        properties: {'sides': S.integer(description: 'How many sides the die has, such as 20.')},
+        required: ['sides'],
       ),
-      AutoFunctionDeclaration(
-        name: 'checkShelf',
-        description: 'Lists the ingredients the shop has in stock.',
-        parameters: {},
-        callable: (args) {
-          _toolLog.add('checkShelf() -> $_shelf');
-          return {'ingredients': _shelf};
-        },
-      ),
-    ]),
+      onCall: (input) {
+        final sides = (input['sides'] as num?)?.toInt() ?? 20;
+        final roll = _random.nextInt(sides) + 1;
+        _toolLog.add('rollDice(sides: $sides) -> $roll');
+        return {'roll': roll};
+      },
+    ),
+    Tool<Map<String, dynamic>>(
+      name: 'checkShelf',
+      description: 'Lists the ingredients the shop has in stock.',
+      onCall: (input) {
+        _toolLog.add('checkShelf() -> $_shelf');
+        return {'ingredients': _shelf};
+      },
+    ),
   ];
 
   // The function calls of the last turn, for the X-ray view.
   final List<String> _toolLog = [];
 
-  // 6. The model: your persona first, then the A2UI rules, and your functions.
-  late final _model = FirebaseAI.googleAI().generativeModel(
-    model: 'gemini-3.6-flash',
-    systemInstruction: Content.system('$_persona\n${_a2uiAgent.promptSnippet}'),
+  // 6. Gemini, reached with your API key, with your functions.
+  late final _gemini = Agent.forProvider(
+    GoogleProvider(apiKey: geminiApiKey),
+    chatModelName: 'gemini-3.6-flash',
     tools: _tools,
   );
 
-  // 7. A chat remembers the conversation, so Gemini knows which surfaces it made.
-  late final _chat = _model.startChat();
+  // 7. The conversation so far. The system message holds your persona first,
+  //    then the A2UI rules.
+  late final List<ChatMessage> _history = [ChatMessage.system('$_persona\n${_a2uiAgent.promptSnippet}')];
 
   // The last raw reply from Gemini, for the X-ray view.
   String lastRawReply = '';
 
-  Future<String> send(String prompt) => _generate(Content.text(prompt));
+  Future<String> send(String prompt) => _generate(prompt);
 
-  // A photo plus a short instruction, in one message.
+  // A photo, attached to a short instruction.
   Future<String> sendPhoto(Uint8List bytes, String mimeType) => _generate(
-    Content.multi([
-      TextPart('Here is a photo. Make a potion from what you see.'),
-      InlineDataPart(mimeType, bytes),
-    ]),
+    'Here is a photo. Make a potion from what you see.',
+    [DataPart(bytes, mimeType: mimeType)],
   );
 
   // A button press inside a surface, sent back to Gemini as JSON.
   Future<String> sendAction(A2uiRendererAction action) {
     final dataModel = processor.getRendererDataModel();
-    final message = jsonEncode({
-      'a2ui': RendererToAgentMessagePayload.of(ActionMessage(version: '1.0', action: action)).toJson(),
-      if (dataModel != null) 'metadata': {'a2uiRendererDataModel': dataModel},
-    });
-    return _generate(Content.text(message));
+    return _generate(
+      jsonEncode({
+        'a2ui': RendererToAgentMessagePayload.of(ActionMessage(version: '1.0', action: action)).toJson(),
+        if (dataModel != null) 'metadata': {'a2uiRendererDataModel': dataModel},
+      }),
+    );
   }
 
-  // Sends one message to Gemini and draws the reply.
-  Future<String> _generate(Content content) async {
+  // Sends one message to Gemini, with any attachments, and draws the reply.
+  Future<String> _generate(String prompt, [List<Part> attachments = const []]) async {
     _toolLog.clear();
     try {
-      final response = await _chat.sendMessage(content);
-      return _render(response.text ?? '');
+      final result = await _gemini.send(prompt, history: _history, attachments: attachments);
+      _history.addAll(result.messages); // Remember this turn.
+      return _render(result.output);
     } catch (e) {
       return 'Error: $e';
     }
@@ -1165,12 +1199,7 @@ The basic catalog only gets you so far. Now you add a component that exists only
 
 Potion Lab draws a `PotionBottle` with a `CustomPainter`. The `fill` property is bound to the data model, so when Gemini sets `/fill` to 0 after a brew, the liquid drains away with an animation.
 
-1.  **Add the schema package:**
-    ```sh
-    flutter pub add json_schema_builder
-    ```
-
-2.  **Create `lib/my_catalog.dart`:**
+1.  **Create `lib/my_catalog.dart`.** The schema is written with `json_schema_builder`, which you added in Step 2:
 
     ```dart
     // lib/my_catalog.dart
@@ -1265,7 +1294,7 @@ Potion Lab draws a `PotionBottle` with a `CustomPainter`. The `fill` property is
     }
     ```
 
-3.  **Register your catalog in `lib/agent_service.dart`.** Import `my_catalog.dart`, use both catalogs everywhere the basic one was, and tell the persona about your component:
+2.  **Register your catalog in `lib/agent_service.dart`.** Import `my_catalog.dart`, use both catalogs everywhere the basic one was, and tell the persona about your component:
 
     ```dart
       // 1. The catalogs: every component the app can draw. Yours comes after the basic one.
@@ -1315,7 +1344,7 @@ Gemini can stream its reply in chunks, and `StreamedAnswer` can read chunk by ch
 
 * the processor uses `ValidationConfig.relaxed`, so a half-written surface can already show
 * `progressiveKeys` shows `text` and `label` values word by word
-* `_generate` uses `sendMessageStream` and feeds each chunk as it arrives
+* `_generate` uses `sendStream` and feeds each chunk as it arrives
 
 ```dart
   // 2. The renderer: it applies A2UI messages and remembers every surface.
@@ -1337,17 +1366,20 @@ Gemini can stream its reply in chunks, and `StreamedAnswer` can read chunk by ch
 ```
 
 ```dart
-  // Streams one message to Gemini and draws the reply as it arrives.
-  Future<String> _generate(Content content) async {
+  // Streams one message to Gemini, with any attachments, and draws the reply as it arrives.
+  Future<String> _generate(String prompt, [List<Part> attachments = const []]) async {
     _toolLog.clear();
     final reply = StringBuffer();
+    final newMessages = <ChatMessage>[];
     final answer = StreamedAnswer(_a2uiAgent, renderer: processor);
     try {
-      await for (final chunk in _chat.sendMessageStream(content)) {
-        reply.write(chunk.text ?? '');
-        answer.feed(chunk.text ?? ''); // Each chunk updates the surfaces right away.
+      await for (final chunk in _gemini.sendStream(prompt, history: _history, attachments: attachments)) {
+        reply.write(chunk.output);
+        answer.feed(chunk.output); // Each chunk updates the surfaces right away.
+        newMessages.addAll(chunk.messages);
       }
       answer.close();
+      _history.addAll(newMessages); // Remember this turn.
     } catch (e) {
       return 'Error: $e';
     }
@@ -1366,7 +1398,7 @@ Gemini can stream its reply in chunks, and `StreamedAnswer` can read chunk by ch
 
 `HomePage` doesn't change: it already keeps the surfaces on screen while it loads.
 
-> 🧠 **What just happened:** each chunk Gemini streams is fed to the parser, which applies every message as soon as it is complete. The function calls from Step 10 still work: `sendMessageStream` runs them between chunks.
+> 🧠 **What just happened:** each chunk Gemini streams is fed to the parser, which applies every message as soon as it is complete. The function calls from Step 10 still work: `sendStream` runs them between chunks.
 
 > 🎨 **Make it yours:** look at your persona's layout with fresh eyes. The first component Gemini writes appears first, so put the exciting part at the top.
 
@@ -1380,16 +1412,16 @@ Gemini can stream its reply in chunks, and `StreamedAnswer` can read chunk by ch
 
 A component's builder can do anything a widget can, including calling another AI. `Illustration` takes a `prompt` that Gemini writes, and an image model paints it.
 
-1.  **Create `lib/illustration.dart`.** The image model answers with pictures as well as text, so we ask for both `responseModalities`. A cache stops it from painting the same picture twice when the surface rebuilds. Note the `show` on the `firebase_ai` import: `firebase_ai` has its own `Schema`, which would clash with `json_schema_builder`'s.
+1.  **Create `lib/illustration.dart`.** It asks an image model for a picture with `generateMedia`. A cache stops it from painting the same picture twice when the surface rebuilds.
 
     ```dart
     // lib/illustration.dart
     import 'dart:typed_data';
     import 'package:a2ui_flutter/a2ui_flutter.dart';
-    // Only what we need from firebase_ai: it has its own Schema, which would clash.
-    import 'package:firebase_ai/firebase_ai.dart' show Content, FirebaseAI, GenerationConfig, ResponseModalities;
+    import 'package:dartantic_ai/dartantic_ai.dart' show Agent, DataPart, GoogleProvider;
     import 'package:flutter/material.dart';
     import 'package:json_schema_builder/json_schema_builder.dart' hide ValidationResult;
+    import 'api_key.dart';
 
     // A picture that an image model paints from a description Gemini writes.
     final illustration = ComponentImplementation(
@@ -1416,11 +1448,8 @@ A component's builder can do anything a widget can, including calling another AI
     }
 
     class _IllustrationViewState extends State<_IllustrationView> {
-      // The image model: it answers with pictures as well as text.
-      static final _artist = FirebaseAI.googleAI().generativeModel(
-        model: 'gemini-3.1-flash-image',
-        generationConfig: GenerationConfig(responseModalities: [ResponseModalities.text, ResponseModalities.image]),
-      );
+      // The artist: a Gemini model that paints pictures.
+      static final _artist = Agent.forProvider(GoogleProvider(apiKey: geminiApiKey), mediaModelName: 'gemini-3.1-flash-image');
 
       // Pictures already painted, by prompt, so a rebuild doesn't paint again.
       static final _cache = <String, Future<Uint8List?>>{};
@@ -1440,8 +1469,8 @@ A component's builder can do anything a widget can, including calling another AI
       }
 
       static Future<Uint8List?> _paint(String prompt) => _cache.putIfAbsent(prompt, () async {
-        final response = await _artist.generateContent([Content.text(prompt)]);
-        return response.inlineDataParts.firstOrNull?.bytes;
+        final result = await _artist.generateMedia(prompt, mimeTypes: const ['image/png']);
+        return result.assets.whereType<DataPart>().firstOrNull?.bytes;
       });
 
       @override
@@ -1642,5 +1671,8 @@ You now have an app that nobody else has: your idea, your persona, your rules an
 * [`a2ui_agent`](https://pub.dev/packages/a2ui_agent): the compact Express format, trimming a catalog, and running the agent on a Dart server
 * [The official A2UI example](https://github.com/a2ui-project/a2ui/tree/main/dart/a2ui_flutter/example): a full chat that also sends rendering errors back to the model, so it can fix its own UI
 * [Flutter Scene docs](https://fscene.dev): 3D models, materials, lighting, physics and more
+* [`dartantic_ai`](https://pub.dev/packages/dartantic_ai): other AI providers, typed outputs and more
+
+> **Before you ship:** your API key is built into the app. That's fine for a workshop and for apps that only run on your own machine, but anyone who downloads a published app could dig the key out and use your quota. For a real app, call Gemini from your own server, or use [Firebase AI Logic](https://firebase.google.com/docs/ai-logic) with App Check, which proves requests come from your app.
 
 > **Security note:** treat any agent outside your control as untrusted. A malicious agent could imitate a real interface to trick users. In this workshop the agent is your own app talking to Gemini, but keep it in mind before you render UI from someone else's agent.

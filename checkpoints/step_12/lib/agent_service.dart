@@ -2,11 +2,12 @@
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:a2ui_agent/a2ui_agent.dart' hide TextPart; // firebase_ai has its own TextPart
+import 'package:a2ui_agent/a2ui_agent.dart';
 import 'package:a2ui_core/a2ui_core.dart';
 import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:a2ui_flutter/basic_catalog.dart';
-import 'package:firebase_ai/firebase_ai.dart';
+import 'package:dartantic_ai/dartantic_ai.dart';
+import 'api_key.dart';
 import 'my_catalog.dart';
 
 class AgentService {
@@ -55,82 +56,85 @@ with an updateDataModel message, because the bottle is now empty. Do not create 
 ''';
 
   // 5. YOUR rules: functions that your code decides, not the AI.
-  //    Gemini asks to call them, the chat runs them, and Gemini reads the result.
+  //    Gemini asks to call them, the agent runs them, and Gemini reads the result.
   static const _shelf = ['dragon scale', 'moonlight', 'frog giggle', 'cinnamon', 'thunder in a jar', 'unicorn hair'];
   final _random = Random();
 
   late final _tools = [
-    Tool.functionDeclarations([
-      AutoFunctionDeclaration(
-        name: 'rollDice',
-        description: 'Rolls a die and returns the number it lands on.',
-        parameters: {'sides': Schema.integer(description: 'How many sides the die has, such as 20.')},
-        callable: (args) {
-          final sides = (args['sides'] as num?)?.toInt() ?? 20;
-          final roll = _random.nextInt(sides) + 1;
-          _toolLog.add('rollDice(sides: $sides) -> $roll');
-          return {'roll': roll};
-        },
+    Tool<Map<String, dynamic>>(
+      name: 'rollDice',
+      description: 'Rolls a die and returns the number it lands on.',
+      inputSchema: S.object(
+        properties: {'sides': S.integer(description: 'How many sides the die has, such as 20.')},
+        required: ['sides'],
       ),
-      AutoFunctionDeclaration(
-        name: 'checkShelf',
-        description: 'Lists the ingredients the shop has in stock.',
-        parameters: {},
-        callable: (args) {
-          _toolLog.add('checkShelf() -> $_shelf');
-          return {'ingredients': _shelf};
-        },
-      ),
-    ]),
+      onCall: (input) {
+        final sides = (input['sides'] as num?)?.toInt() ?? 20;
+        final roll = _random.nextInt(sides) + 1;
+        _toolLog.add('rollDice(sides: $sides) -> $roll');
+        return {'roll': roll};
+      },
+    ),
+    Tool<Map<String, dynamic>>(
+      name: 'checkShelf',
+      description: 'Lists the ingredients the shop has in stock.',
+      onCall: (input) {
+        _toolLog.add('checkShelf() -> $_shelf');
+        return {'ingredients': _shelf};
+      },
+    ),
   ];
 
   // The function calls of the last turn, for the X-ray view.
   final List<String> _toolLog = [];
 
-  // 6. The model: your persona first, then the A2UI rules, and your functions.
-  late final _model = FirebaseAI.googleAI().generativeModel(
-    model: 'gemini-3.6-flash',
-    systemInstruction: Content.system('$_persona\n${_a2uiAgent.promptSnippet}'),
+  // 6. Gemini, reached with your API key, with your functions.
+  late final _gemini = Agent.forProvider(
+    GoogleProvider(apiKey: geminiApiKey),
+    chatModelName: 'gemini-3.6-flash',
     tools: _tools,
   );
 
-  // 7. A chat remembers the conversation, so Gemini knows which surfaces it made.
-  late final _chat = _model.startChat();
+  // 7. The conversation so far. The system message holds your persona first,
+  //    then the A2UI rules.
+  late final List<ChatMessage> _history = [ChatMessage.system('$_persona\n${_a2uiAgent.promptSnippet}')];
 
   // The last raw reply from Gemini, for the X-ray view.
   String lastRawReply = '';
 
-  Future<String> send(String prompt) => _generate(Content.text(prompt));
+  Future<String> send(String prompt) => _generate(prompt);
 
-  // A photo plus a short instruction, in one message.
+  // A photo, attached to a short instruction.
   Future<String> sendPhoto(Uint8List bytes, String mimeType) => _generate(
-    Content.multi([
-      TextPart('Here is a photo. Make a potion from what you see.'),
-      InlineDataPart(mimeType, bytes),
-    ]),
+    'Here is a photo. Make a potion from what you see.',
+    [DataPart(bytes, mimeType: mimeType)],
   );
 
   // A button press inside a surface, sent back to Gemini as JSON.
   Future<String> sendAction(A2uiRendererAction action) {
     final dataModel = processor.getRendererDataModel();
-    final message = jsonEncode({
-      'a2ui': RendererToAgentMessagePayload.of(ActionMessage(version: '1.0', action: action)).toJson(),
-      if (dataModel != null) 'metadata': {'a2uiRendererDataModel': dataModel},
-    });
-    return _generate(Content.text(message));
+    return _generate(
+      jsonEncode({
+        'a2ui': RendererToAgentMessagePayload.of(ActionMessage(version: '1.0', action: action)).toJson(),
+        if (dataModel != null) 'metadata': {'a2uiRendererDataModel': dataModel},
+      }),
+    );
   }
 
-  // Streams one message to Gemini and draws the reply as it arrives.
-  Future<String> _generate(Content content) async {
+  // Streams one message to Gemini, with any attachments, and draws the reply as it arrives.
+  Future<String> _generate(String prompt, [List<Part> attachments = const []]) async {
     _toolLog.clear();
     final reply = StringBuffer();
+    final newMessages = <ChatMessage>[];
     final answer = StreamedAnswer(_a2uiAgent, renderer: processor);
     try {
-      await for (final chunk in _chat.sendMessageStream(content)) {
-        reply.write(chunk.text ?? '');
-        answer.feed(chunk.text ?? ''); // Each chunk updates the surfaces right away.
+      await for (final chunk in _gemini.sendStream(prompt, history: _history, attachments: attachments)) {
+        reply.write(chunk.output);
+        answer.feed(chunk.output); // Each chunk updates the surfaces right away.
+        newMessages.addAll(chunk.messages);
       }
       answer.close();
+      _history.addAll(newMessages); // Remember this turn.
     } catch (e) {
       return 'Error: $e';
     }

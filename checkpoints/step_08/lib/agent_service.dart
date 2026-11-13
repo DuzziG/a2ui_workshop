@@ -1,10 +1,11 @@
 // lib/agent_service.dart
 import 'dart:typed_data';
-import 'package:a2ui_agent/a2ui_agent.dart' hide TextPart; // firebase_ai has its own TextPart
+import 'package:a2ui_agent/a2ui_agent.dart';
 import 'package:a2ui_core/a2ui_core.dart';
 import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:a2ui_flutter/basic_catalog.dart';
-import 'package:firebase_ai/firebase_ai.dart';
+import 'package:dartantic_ai/dartantic_ai.dart';
+import 'api_key.dart';
 
 class AgentService {
   // 1. The catalog: every component the app can draw.
@@ -37,30 +38,30 @@ Always answer with one short sentence in character, and exactly one new A2UI sur
 Give every new surface a new surfaceId. Never answer with text only.
 ''';
 
-  // 5. The model: your persona first, then the A2UI rules.
-  late final _model = FirebaseAI.googleAI().generativeModel(
-    model: 'gemini-3.6-flash',
-    systemInstruction: Content.system('$_persona\n${_a2uiAgent.promptSnippet}'),
-  );
+  // 5. Gemini, reached with your API key.
+  final _gemini = Agent.forProvider(GoogleProvider(apiKey: geminiApiKey), chatModelName: 'gemini-3.6-flash');
+
+  // 6. The conversation so far. The system message holds your persona first,
+  //    then the A2UI rules.
+  late final List<ChatMessage> _history = [ChatMessage.system('$_persona\n${_a2uiAgent.promptSnippet}')];
 
   // The last raw reply from Gemini, for the X-ray view.
   String lastRawReply = '';
 
-  Future<String> send(String prompt) => _generate(Content.text(prompt));
+  Future<String> send(String prompt) => _generate(prompt);
 
-  // A photo plus a short instruction, in one message.
+  // A photo, attached to a short instruction.
   Future<String> sendPhoto(Uint8List bytes, String mimeType) => _generate(
-    Content.multi([
-      TextPart('Here is a photo. Make a potion from what you see.'),
-      InlineDataPart(mimeType, bytes),
-    ]),
+    'Here is a photo. Make a potion from what you see.',
+    [DataPart(bytes, mimeType: mimeType)],
   );
 
-  // Sends one message to Gemini and draws the reply.
-  Future<String> _generate(Content content) async {
+  // Sends one message to Gemini, with any attachments, and draws the reply.
+  Future<String> _generate(String prompt, [List<Part> attachments = const []]) async {
     try {
-      final response = await _model.generateContent([content]);
-      return _render(response.text ?? '');
+      final result = await _gemini.send(prompt, history: _history, attachments: attachments);
+      _history.addAll(result.messages); // Remember this turn.
+      return _render(result.output);
     } catch (e) {
       return 'Error: $e';
     }

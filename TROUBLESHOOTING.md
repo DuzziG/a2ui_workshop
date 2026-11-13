@@ -1,126 +1,56 @@
 # Troubleshooting
 
-Problems found while testing the workshop, in the order we hit them. Each one also has a short note in the step where it happens.
+Each entry gives the step, what you see, why it happens and how to fix it.
 
-Found a new one? Add it to the end, with the step, what you saw, why it happens and how to fix it.
-
----
-
-## 1. `flutterfire` is not found after installing it
-
-**Step:** 1, Install the Command Line Tools
-
-**What you see:** right after `dart pub global activate flutterfire_cli`, running `flutterfire` fails with `command not found: flutterfire` (macOS and Linux), or `'flutterfire' is not recognized` (Windows). The install itself also prints a warning that the folder isn't on your path.
-
-**Why:** `dart pub global activate` puts the command in Dart's global package folder, and your terminal doesn't look there unless that folder is on your `PATH`.
-
-**Fix:** add the folder to your `PATH`, then open a **new** terminal window.
-
-* **macOS (zsh, the default):**
-    ```sh
-    echo 'export PATH="$PATH:$HOME/.pub-cache/bin"' >> ~/.zshrc
-    ```
-* **Linux (bash):**
-    ```sh
-    echo 'export PATH="$PATH:$HOME/.pub-cache/bin"' >> ~/.bashrc
-    ```
-* **Windows:** add `%LOCALAPPDATA%\Pub\Cache\bin` to your `Path` in *Edit the system environment variables* → *Environment Variables*.
-
-**Quick workaround** if you'd rather not touch your `PATH` now. This runs the same command:
-```sh
-dart pub global run flutterfire_cli:flutterfire configure
-```
+* **Problems you may hit** were prepared ahead of time, so you're ready before anyone runs into them.
+* **Found while testing** logs real problems from test runs. Found a new one? Add it there.
 
 ---
 
-## 2. `flutterfire configure` stops with `cannot load such file -- xcodeproj`
+# Problems You May Hit
 
-**Step:** 2, Create Your Project
+## 1. The app only says "Paste your Gemini API key into lib/api_key.dart"
 
-**What you see:** on a Mac, `flutterfire configure` creates the Firebase project and registers the apps, then stops with:
-```
-Exception: .../rubygems/core_ext/kernel_require.rb:54:in `require': cannot load such file -- xcodeproj (LoadError)
-```
+**Step:** 3, The App Shell
 
-**Why:** to add the iOS config file to your Xcode project, FlutterFire uses the `xcodeproj` Ruby gem, and the Ruby that comes with macOS doesn't have it.
+**Why:** `geminiApiKey` in `lib/api_key.dart` is still the placeholder, or is empty.
 
-**Fix:** your Firebase apps were already created, so nothing is lost.
+**Fix:** paste your key from [Google AI Studio](https://aistudio.google.com/apikey) between the quotes, then **restart** the app. A hot reload isn't enough, because the key is a constant that's read when the app starts.
 
-1. Install the gem:
-    ```sh
-    sudo gem install xcodeproj
-    ```
-2. Run `flutterfire configure` again and pick your **existing** project. Don't create a new one.
-3. Check that `lib/firebase_options.dart` exists. It may not have been written the first time.
+## 2. `Error: ApiException(400): API key not valid. Please pass a valid API key.`
 
-**Or skip iOS for now:** run `flutterfire configure` again and select only **android** and **web**. Neither needs the gem, and Chrome needs no extra setup.
+**Step:** 3, The App Shell (the first message to Gemini)
 
-**Watch out:** if you created the project from the CLI (`<create a new project>`), Gemini isn't enabled on it yet. In the [Firebase console](https://console.firebase.google.com/), open your project, go to **AI Logic**, click **Get started** and choose the **Gemini Developer API**. Otherwise your first Gemini call in Step 6 fails.
+**Why:** the key in `lib/api_key.dart` isn't a working key. Usually part of it is missing, there's a space inside the quotes, or it was deleted in AI Studio.
 
----
+**Fix:** copy the key again from [AI Studio](https://aistudio.google.com/apikey) and paste it over the old one, with nothing else between the quotes. Then restart the app. A brand new key can take a minute to start working.
 
-## 3. `flutterfire configure` fails with `Failed to get WEB app configuration`
+## 3. AI Studio won't open, or says it isn't available for your account
 
-**Step:** 2, Create Your Project
+**Step:** 1, Get Your Gemini API Key
 
-**What you see:** `flutterfire configure` registers the apps, then stops with:
-```
-FirebaseCommandException: An error occured on the Firebase CLI when attempting to run a command.
-COMMAND: firebase apps:sdkconfig web 1:...:web:... --json
-ERROR: Failed to get WEB app configuration. See firebase-debug.log for more info.
-```
-No files are written.
+**Why:** school and work Google accounts sometimes have AI Studio switched off by their admin.
 
-**Why (likely, still to confirm):** the web app was registered only moments before, and Firebase isn't ready to hand out its settings yet. It happens most with a project created a few minutes earlier.
+**Fix:** sign in with a personal Google account instead.
 
-**Fix:** try these in order.
+## 4. `Error: ApiException(429)`, or a message about quota or `RESOURCE_EXHAUSTED`
 
-1. Wait a minute or two, then run `flutterfire configure` again with the same choices.
-2. Still failing? Ask for the config directly, using the app ID from the error, to see a clearer message:
-    ```sh
-    firebase apps:sdkconfig web <app-id-from-the-error>
-    ```
-3. Update the Firebase CLI with `npm install -g firebase-tools@latest`, then `firebase logout` and `firebase login`, and try again.
+**Step:** any step that calls Gemini, most often Bonus A (pictures)
 
-The full reason is in `firebase-debug.log`, which the CLI writes in your project folder.
+**Why:** the free tier limits how many requests you can send per minute and per day. Pictures use it up faster than text.
+
+**Fix:** wait a minute and try again. If the daily limit is used up, try again tomorrow, or switch to a model with more free requests by changing `chatModelName` in `agent_service.dart`.
+
+## 5. `Error: ApiException(404)`, with a message that the model is not found
+
+**Step:** any step that calls Gemini
+
+**Why:** the model named in `chatModelName` (or `mediaModelName`, in Bonus A) isn't available to your key. Google retires older models from time to time.
+
+**Fix:** pick a current model from the list in [AI Studio](https://aistudio.google.com/), and put its name in `chatModelName` in `agent_service.dart`.
 
 ---
 
-## 4. `Firebase AI Logic API has not been used in project ... or it is disabled`
+# Found While Testing
 
-**Step:** 6, Gemini Writes the UI (the first step that calls Gemini)
-
-**What you see:** the app runs, but your first prompt answers with:
-```
-Error: Firebase AI Logic API has not been used in project 123456789 before or it is disabled.
-Enable it by visiting https://console.developers.google.com/apis/api/firebasevertexai.googleapis.com/overview?project=123456789
-then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
-```
-
-**Why:** Gemini isn't switched on for your Firebase project. This always happens when the project was created with `flutterfire configure` (`<create a new project>`), which skips that setup. `firebasevertexai` is just the old name of the Firebase AI Logic API.
-
-**Fix:**
-
-1. In the [Firebase console](https://console.firebase.google.com/), open your project, go to **AI Logic**, click **Get started** and choose the **Gemini Developer API**. This does more than the link in the error, which only enables the API.
-2. Wait a few minutes, then send your prompt again. You don't need to restart the app.
-
----
-
-## 5. `Error: Firebase App Check token is invalid.`
-
-**Step:** 6, Gemini Writes the UI (the first step that calls Gemini)
-
-**What you see:** the app runs, but every prompt answers with `Error: Firebase App Check token is invalid.` In the Firebase console, your apps show **App Check: Unregistered**.
-
-**Why:** `firebase_ai` sends an App Check token with every request. It uses the `firebase_app_check` package, which comes with `firebase_ai` whether you add it or not. If App Check was never activated, or your debug token isn't registered in the console, the token is useless and Firebase rejects the request.
-
-**Fix:** follow Step 3:
-
-1. Create a debug token in the Firebase console: **App Check** → **Apps** → **⋮** next to your app → **Manage debug tokens** → **Add debug token** → **Generate token**.
-2. Add the same token to every app you run on (web, android, ios).
-3. Paste it into `appCheckDebugToken` in `lib/main.dart`, which activates App Check with the debug providers.
-4. Restart the app (a hot reload isn't enough, because App Check starts in `main`).
-
-**Why a fixed token:** without one, the debug provider makes up a new token and prints it to the logs. `flutter run -d chrome` opens Chrome with a fresh profile every time, so you'd get a new token, and have to register it again, on every run.
-
-**Before you ship:** debug tokens are for development only. A real app uses a real provider instead: reCAPTCHA on the web, Play Integrity on Android, and App Attest or DeviceCheck on Apple.
+Nothing yet with the API key setup. The first test run used Firebase, and every problem it hit was in the Firebase setup, which the workshop no longer uses. Those notes are still in the Git history.

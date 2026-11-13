@@ -1,10 +1,10 @@
 // lib/illustration.dart
 import 'dart:typed_data';
 import 'package:a2ui_flutter/a2ui_flutter.dart';
-// Only what we need from firebase_ai: it has its own Schema, which would clash.
-import 'package:firebase_ai/firebase_ai.dart' show Content, FirebaseAI, GenerationConfig, ResponseModalities;
+import 'package:dartantic_ai/dartantic_ai.dart' show Agent, DataPart, GoogleProvider;
 import 'package:flutter/material.dart';
 import 'package:json_schema_builder/json_schema_builder.dart' hide ValidationResult;
+import 'api_key.dart';
 
 // A picture that an image model paints from a description Gemini writes.
 final illustration = ComponentImplementation(
@@ -31,11 +31,8 @@ class _IllustrationView extends StatefulWidget {
 }
 
 class _IllustrationViewState extends State<_IllustrationView> {
-  // The image model: it answers with pictures as well as text.
-  static final _artist = FirebaseAI.googleAI().generativeModel(
-    model: 'gemini-3.1-flash-image',
-    generationConfig: GenerationConfig(responseModalities: [ResponseModalities.text, ResponseModalities.image]),
-  );
+  // The artist: a Gemini model that paints pictures.
+  static final _artist = Agent.forProvider(GoogleProvider(apiKey: geminiApiKey), mediaModelName: 'gemini-3.1-flash-image');
 
   // Pictures already painted, by prompt, so a rebuild doesn't paint again.
   static final _cache = <String, Future<Uint8List?>>{};
@@ -55,8 +52,8 @@ class _IllustrationViewState extends State<_IllustrationView> {
   }
 
   static Future<Uint8List?> _paint(String prompt) => _cache.putIfAbsent(prompt, () async {
-    final response = await _artist.generateContent([Content.text(prompt)]);
-    return response.inlineDataParts.firstOrNull?.bytes;
+    final result = await _artist.generateMedia(prompt, mimeTypes: const ['image/png']);
+    return result.assets.whereType<DataPart>().firstOrNull?.bytes;
   });
 
   @override

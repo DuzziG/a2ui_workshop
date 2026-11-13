@@ -3,7 +3,8 @@ import 'package:a2ui_agent/a2ui_agent.dart';
 import 'package:a2ui_core/a2ui_core.dart';
 import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:a2ui_flutter/basic_catalog.dart';
-import 'package:firebase_ai/firebase_ai.dart';
+import 'package:dartantic_ai/dartantic_ai.dart';
+import 'api_key.dart';
 
 class AgentService {
   // 1. The catalog: every component the app can draw.
@@ -35,19 +36,21 @@ Always answer with one short sentence in character, and exactly one new A2UI sur
 Give every new surface a new surfaceId. Never answer with text only.
 ''';
 
-  // 5. The model: your persona first, then the A2UI rules.
-  late final _model = FirebaseAI.googleAI().generativeModel(
-    model: 'gemini-3.6-flash',
-    systemInstruction: Content.system('$_persona\n${_a2uiAgent.promptSnippet}'),
-  );
+  // 5. Gemini, reached with your API key.
+  final _gemini = Agent.forProvider(GoogleProvider(apiKey: geminiApiKey), chatModelName: 'gemini-3.6-flash');
+
+  // 6. The conversation so far. The system message holds your persona first,
+  //    then the A2UI rules.
+  late final List<ChatMessage> _history = [ChatMessage.system('$_persona\n${_a2uiAgent.promptSnippet}')];
 
   // The last raw reply from Gemini, for the X-ray view.
   String lastRawReply = '';
 
   Future<String> send(String prompt) async {
     try {
-      final response = await _model.generateContent([Content.text(prompt)]);
-      return _render(response.text ?? '');
+      final result = await _gemini.send(prompt, history: _history);
+      _history.addAll(result.messages); // Remember this turn.
+      return _render(result.output);
     } catch (e) {
       return 'Error: $e';
     }
