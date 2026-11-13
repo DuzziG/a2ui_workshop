@@ -69,7 +69,8 @@ All the examples in this guide build **Potion Lab**: a grumpy Potion Master inve
 > 🎯 **Goal:** a key that lets your app talk to Gemini. It takes about a minute.
 
 1.  Open **[Google AI Studio](https://aistudio.google.com/apikey)** and sign in with your Google account.
-2.  Click **Create API key**, and copy the key.
+2.  Click **Create API key**.
+3.  **Keep this tab open.** You'll copy the key from it at the end of Step 2, right when you need it.
 
 That's the whole setup: no project to configure and no command line tools to install. The free tier is plenty for this workshop.
 
@@ -100,7 +101,7 @@ That's the whole setup: no project to configure and no command line tools to ins
     | `image_picker` | Picks photos to show Gemini (Step 8) |
     | `json_schema_builder` | Describes your own components to Gemini (Step 11) |
 
-3.  **Save your API key.** Create `lib/api_key.dart` and paste your key into it:
+3.  **Save your API key.** Go back to the AI Studio tab, copy your key, and paste it into a new file, `lib/api_key.dart`:
     ```dart
     // lib/api_key.dart
     // Your Gemini API key, from https://aistudio.google.com/apikey
