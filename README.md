@@ -93,9 +93,9 @@ All the examples in this guide build **Potion Lab**: a grumpy Potion Master inve
     ```
     Run every command from this folder from now on.
 
-2.  **Add the packages.** `firebase_core` connects the app to Firebase, so add it before you run `flutterfire configure`. `a2ui_core` reads A2UI messages and keeps the state of every surface. `a2ui_flutter` draws those surfaces as Flutter widgets.
+2.  **Add the packages.** `firebase_core` connects the app to Firebase, so add it before you run `flutterfire configure`. `firebase_app_check` proves to Firebase that requests come from your app. `a2ui_core` reads A2UI messages and keeps the state of every surface. `a2ui_flutter` draws those surfaces as Flutter widgets.
     ```sh
-    flutter pub add firebase_core a2ui_flutter a2ui_core
+    flutter pub add firebase_core firebase_app_check a2ui_flutter a2ui_core
     ```
 
 3.  **Connect it to Firebase.** Pick your project and the platforms you want. This writes `lib/firebase_options.dart`.
@@ -265,18 +265,40 @@ We create the files in the order they depend on each other, so your editor never
     }
     ```
 
-3.  **Replace `lib/main.dart`.** It starts Firebase, then shows the home page.
+3.  **Create an App Check debug token.** Firebase only answers Gemini requests that come with a valid App Check token. While you develop, a **debug token** stands in for the real check.
+
+    1. In the [Firebase console](https://console.firebase.google.com/), open your project and go to **App Check**, then the **Apps** tab.
+    2. Click the **⋮** menu next to your **web** app and choose **Manage debug tokens**.
+    3. Click **Add debug token**, then **Generate token**, give it a name and save it. Copy the token.
+    4. Add the **same token** to every other app you'll run on (android, ios), the same way.
+
+    > **Keep the token private.** Anyone who has it can use your Gemini quota. Don't post it or push it to a public repo, and delete it in the console after the workshop.
+
+4.  **Replace `lib/main.dart`.** It starts Firebase, turns on App Check with your debug token, then shows the home page. Paste your token into `appCheckDebugToken`.
 
     ```dart
     // lib/main.dart
+    import 'package:firebase_app_check/firebase_app_check.dart';
     import 'package:firebase_core/firebase_core.dart';
     import 'package:flutter/material.dart';
     import 'firebase_options.dart';
     import 'home_page.dart';
 
+    // Your App Check debug token, from the Firebase console:
+    // App Check > Apps > ⋮ next to your app > Manage debug tokens > Add debug token.
+    // Keep it private: anyone who has it can use your Gemini quota.
+    const appCheckDebugToken = 'PASTE-YOUR-DEBUG-TOKEN-HERE';
+
     void main() async {
       WidgetsFlutterBinding.ensureInitialized();
       await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+      // App Check proves that requests to Gemini come from your app.
+      // While you develop, the debug providers use your debug token.
+      await FirebaseAppCheck.instance.activate(
+        providerWeb: WebDebugProvider(debugToken: appCheckDebugToken),
+        providerAndroid: const AndroidDebugProvider(debugToken: appCheckDebugToken),
+        providerApple: const AppleDebugProvider(debugToken: appCheckDebugToken),
+      );
       runApp(const MyApp());
     }
 

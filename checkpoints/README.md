@@ -8,7 +8,7 @@ The checkpoints build the example app, Potion Lab. Once you've caught up, put yo
 
 | Folder | The app after this step | Packages added in this step |
 | ------ | ----------------------- | --------------------------- |
-| `step_03` | App shell with a placeholder agent | `firebase_core a2ui_flutter a2ui_core` (Step 2) |
+| `step_03` | App shell with a placeholder agent | `firebase_core firebase_app_check a2ui_flutter a2ui_core` (Step 2) |
 | `step_04` | A hand-written surface | |
 | `step_05` | Hand-written data binding and actions | |
 | `step_06` | Gemini writes the UI, with the X-ray view | `firebase_ai a2ui_agent` |

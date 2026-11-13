@@ -103,3 +103,24 @@ then retry. If you enabled this API recently, wait a few minutes for the action 
 
 1. In the [Firebase console](https://console.firebase.google.com/), open your project, go to **AI Logic**, click **Get started** and choose the **Gemini Developer API**. This does more than the link in the error, which only enables the API.
 2. Wait a few minutes, then send your prompt again. You don't need to restart the app.
+
+---
+
+## 5. `Error: Firebase App Check token is invalid.`
+
+**Step:** 6, Gemini Writes the UI (the first step that calls Gemini)
+
+**What you see:** the app runs, but every prompt answers with `Error: Firebase App Check token is invalid.` In the Firebase console, your apps show **App Check: Unregistered**.
+
+**Why:** `firebase_ai` sends an App Check token with every request. It uses the `firebase_app_check` package, which comes with `firebase_ai` whether you add it or not. If App Check was never activated, or your debug token isn't registered in the console, the token is useless and Firebase rejects the request.
+
+**Fix:** follow Step 3:
+
+1. Create a debug token in the Firebase console: **App Check** → **Apps** → **⋮** next to your app → **Manage debug tokens** → **Add debug token** → **Generate token**.
+2. Add the same token to every app you run on (web, android, ios).
+3. Paste it into `appCheckDebugToken` in `lib/main.dart`, which activates App Check with the debug providers.
+4. Restart the app (a hot reload isn't enough, because App Check starts in `main`).
+
+**Why a fixed token:** without one, the debug provider makes up a new token and prints it to the logs. `flutter run -d chrome` opens Chrome with a fresh profile every time, so you'd get a new token, and have to register it again, on every run.
+
+**Before you ship:** debug tokens are for development only. A real app uses a real provider instead: reCAPTCHA on the web, Play Integrity on Android, and App Attest or DeviceCheck on Apple.
