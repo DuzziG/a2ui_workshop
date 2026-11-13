@@ -635,6 +635,8 @@ Run it and ask for anything:
 
 Then press the **X-ray** button `</>` and read the reply.
 
+> **Getting `Firebase AI Logic API has not been used in project ...`?** Gemini isn't switched on for your Firebase project yet. In the Firebase console, open **AI Logic**, click **Get started**, choose the **Gemini Developer API**, then wait a few minutes and try again. [More in Troubleshooting](TROUBLESHOOTING.md#4-firebase-ai-logic-api-has-not-been-used-in-project--or-it-is-disabled).
+
 > 🧠 **What just happened:** Gemini wrote the same kinds of messages you wrote in Steps 4 and 5, wrapped in `<a2ui-json>` tags with some text around them. The prompt snippet taught it the format, and your catalog limited it to components your app can draw.
 
 > 🎨 **Make it yours:** ask for UI from *your* idea, and use X-ray to see how Gemini built it. Ask for something the basic catalog can't really do, such as a chess board or a chart. How does Gemini get by?

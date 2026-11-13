@@ -83,3 +83,23 @@ No files are written.
 3. Update the Firebase CLI with `npm install -g firebase-tools@latest`, then `firebase logout` and `firebase login`, and try again.
 
 The full reason is in `firebase-debug.log`, which the CLI writes in your project folder.
+
+---
+
+## 4. `Firebase AI Logic API has not been used in project ... or it is disabled`
+
+**Step:** 6, Gemini Writes the UI (the first step that calls Gemini)
+
+**What you see:** the app runs, but your first prompt answers with:
+```
+Error: Firebase AI Logic API has not been used in project 123456789 before or it is disabled.
+Enable it by visiting https://console.developers.google.com/apis/api/firebasevertexai.googleapis.com/overview?project=123456789
+then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+```
+
+**Why:** Gemini isn't switched on for your Firebase project. This always happens when the project was created with `flutterfire configure` (`<create a new project>`), which skips that setup. `firebasevertexai` is just the old name of the Firebase AI Logic API.
+
+**Fix:**
+
+1. In the [Firebase console](https://console.firebase.google.com/), open your project, go to **AI Logic**, click **Get started** and choose the **Gemini Developer API**. This does more than the link in the error, which only enables the API.
+2. Wait a few minutes, then send your prompt again. You don't need to restart the app.
