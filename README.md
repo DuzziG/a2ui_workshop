@@ -65,7 +65,7 @@ All the examples in this guide build **Potion Lab**: a grumpy Potion Master inve
 * **A Firebase project**, with Gemini enabled:
     1. Open the [Firebase console](https://console.firebase.google.com/) and create a new project. Any name works.
     2. You can turn off Google Analytics.
-    3. Open **AI Logic** and click **Get started**. Choose the free **Gemini Developer API**.
+    3. Open **AI Logic** and click **Get started**. Two providers appear: under **Gemini Developer API**, the free one on the left, click **Get started with this API**. Don't pick the **Agent Platform Gemini API**: it needs billing, and the workshop code doesn't use it.
 
 ## Step 1: Install the Command Line Tools
 
