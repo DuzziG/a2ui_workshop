@@ -554,9 +554,14 @@ Every surface has a **data model**: a JSON object that belongs to the surface. C
     }
     ```
 
-2.  **Listen for actions in `lib/home_page.dart`.** In `initState`, under the `onSurfaceDeleted` line, subscribe to `onAction`. Then add the `_showAction` method below `initState`:
+2.  **Listen for actions in `lib/home_page.dart`.** Replace `initState` with this version, which adds the `onAction` line at its end, and add the new `_showAction` method right below it:
 
     ```dart
+      @override
+      void initState() {
+        super.initState();
+        // Whenever the processor creates or deletes a surface, update the screen.
+        _agent.processor.model.onSurfaceCreated.subscribe((surface) => setState(() => _surfaces.add(surface)));
         _agent.processor.model.onSurfaceDeleted.subscribe((id) => setState(() => _surfaces.removeWhere((s) => s.id == id)));
         // When a button inside a surface is pressed, the processor emits an action.
         _agent.processor.model.onAction.subscribe(_showAction);
@@ -724,16 +729,26 @@ How does Gemini learn A2UI? The `a2ui_agent` package handles both sides:
     }
     ```
 
-3.  **Show it from `lib/home_page.dart`.** Import `xray_view.dart`, and add a `_showXray` field to the state class:
+3.  **Show it from `lib/home_page.dart`.** Add the import at the top, with the other imports:
+
+    ```dart
+    import 'xray_view.dart';
+    ```
+
+    Add a `_showXray` field right under `bool _isLoading = false;`:
 
     ```dart
       bool _isLoading = false;
       bool _showXray = false;
     ```
 
-    Give the `AppBar` a button that toggles it, and choose the body by screen width. On a wide screen, such as Chrome on a laptop, the chat and the X-ray sit side by side. On a narrow screen, the X-ray fills it until you press the button again:
+    Then replace the whole `build` method with this one. It gives the `AppBar` a button that toggles the X-ray, and chooses the body by screen width. On a wide screen, such as Chrome on a laptop, the chat and the X-ray sit side by side. On a narrow screen, the X-ray fills it until you press the button again. `_buildChat` below it stays the same.
 
     ```dart
+      @override
+      Widget build(BuildContext context) {
+        final colors = Theme.of(context).colorScheme;
+        return Scaffold(
           appBar: AppBar(
             backgroundColor: colors.inversePrimary,
             title: Text(widget.title),
@@ -781,7 +796,7 @@ Then press the **X-ray** button `</>` and read the reply.
 
 The system message tells the model who it is. With A2UI, you can describe its **UI** as well as its tone: which surfaces it shows, what goes in them, and how they are laid out.
 
-**Update `lib/agent_service.dart`.** Add a persona, and put it before the A2UI rules in the system message. The rest of the file stays the same.
+**Update `lib/agent_service.dart`.** Add a persona, and put it before the A2UI rules in the system message. Replace parts 4 and 5 (from `// 4. Gemini` down to the `_history` line) with this. The rest of the file stays the same.
 
 ```dart
   // 4. YOUR idea: who the agent is, and what its UI looks like.
@@ -918,11 +933,13 @@ Gemini is **multimodal**: it understands images as well as text. One message can
     }
     ```
 
-3.  **Add a photo button to `lib/home_page.dart`.** Import the picker, add a `_sendPhoto` method next to `_sendPrompt`, and put a camera button in front of the prompt box:
+3.  **Add a photo button to `lib/home_page.dart`.** Add the import at the top, with the other imports:
 
     ```dart
     import 'package:image_picker/image_picker.dart';
     ```
+
+    Add `_sendPhoto` right below `_sendPrompt`:
 
     ```dart
       // Lets the user pick a photo and sends it to the agent.
@@ -934,8 +951,28 @@ Gemini is **multimodal**: it understands images as well as text. One message can
       }
     ```
 
+    In `_buildChat`, replace the prompt box (from `// 3. The prompt box.` to the end of its `SafeArea`) with this version. The only new line is the camera `IconButton` in front of the text field:
+
     ```dart
+            // 3. The prompt box.
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  children: [
                     IconButton(onPressed: _isLoading ? null : _sendPhoto, icon: const Icon(Icons.photo_camera)),
+                    Expanded(
+                      child: TextField(
+                        controller: _promptController,
+                        decoration: const InputDecoration(hintText: 'Ask for something...', border: OutlineInputBorder()),
+                        onSubmitted: (_) => _sendPrompt(),
+                      ),
+                    ),
+                    IconButton.filled(onPressed: _isLoading ? null : _sendPrompt, icon: const Icon(Icons.send)),
+                  ],
+                ),
+              ),
+            ),
     ```
 
 Run it and send a photo of anything: your shoe, your lunch, your neighbor's cat.
@@ -1062,9 +1099,15 @@ Gemini already remembers the conversation (that's `_history`, from Step 3), so i
     }
     ```
 
-2.  **Send actions to the agent in `lib/home_page.dart`.** Replace the `onAction` line and the `_showAction` method from Step 5 with:
+2.  **Send actions to the agent in `lib/home_page.dart`.** Replace `initState` with this version: its last line now sends each action to the agent. Then delete the `_showAction` method from Step 5, which nothing uses anymore.
 
     ```dart
+      @override
+      void initState() {
+        super.initState();
+        // Whenever the processor creates or deletes a surface, update the screen.
+        _agent.processor.model.onSurfaceCreated.subscribe((surface) => setState(() => _surfaces.add(surface)));
+        _agent.processor.model.onSurfaceDeleted.subscribe((id) => setState(() => _surfaces.removeWhere((s) => s.id == id)));
         // When a button inside a surface is pressed, send the action to the agent.
         _agent.processor.model.onAction.subscribe((action) => _run(() => _agent.sendAction(action)));
       }
@@ -1368,7 +1411,13 @@ Potion Lab draws a `PotionBottle` with a `CustomPainter`. The `fill` property is
     }
     ```
 
-2.  **Register your catalog in `lib/agent_service.dart`.** Import `my_catalog.dart`, use both catalogs everywhere the basic one was, and tell the persona about your component:
+2.  **Register your catalog in `lib/agent_service.dart`.** Add the import at the top, with the other imports:
+
+    ```dart
+    import 'my_catalog.dart';
+    ```
+
+    Replace parts 1 to 3 (from `// 1. The catalog` down to the end of `_a2uiAgent`) with this version, which uses both catalogs everywhere the basic one was:
 
     ```dart
       // 1. The catalogs: every component the app can draw. Yours comes after the basic one.
@@ -1387,9 +1436,13 @@ Potion Lab draws a `PotionBottle` with a `CustomPainter`. The `fill` property is
       );
     ```
 
+    Then tell your persona about your component. In its list of what goes on the card, add a line that asks for it. In Potion Lab, it goes right under the heading line:
+
     ```dart
     - a PotionBottle in the potion's color, whose fill is bound to /fill, which starts at 1
     ```
+
+    And where the persona says how to answer the button, ask Gemini to update your component too. In Potion Lab, the line that starts with `add a Text that tells the roll` becomes:
 
     ```dart
     add a Text that tells the roll and what happened when the user drank the potion, and set /fill to 0
@@ -1420,6 +1473,8 @@ Gemini can stream its reply in chunks, and `StreamedAnswer` can read chunk by ch
 * `progressiveKeys` shows `text` and `label` values word by word
 * `_generate` uses `sendStream` and feeds each chunk as it arrives
 
+Replace parts 2 and 3 (the renderer and the A2UI agent kit) with:
+
 ```dart
   // 2. The renderer: it applies A2UI messages and remembers every surface.
   //    Relaxed validation lets a half-written surface show while it streams in.
@@ -1438,6 +1493,8 @@ Gemini can stream its reply in chunks, and `StreamedAnswer` can read chunk by ch
     A2uiRendererCapabilities.forCatalogIds([for (final catalog in _catalogs) catalog.id], version: A2uiProtocolVersion.v1_0),
   );
 ```
+
+Then replace the whole `_generate` method with this streaming version:
 
 ```dart
   // Streams one message to Gemini, with any attachments, and draws the reply as it arrives.
@@ -1569,19 +1626,27 @@ A component's builder can do anything a widget can, including calling another AI
     }
     ```
 
-2.  **Add it to your catalog** in `lib/my_catalog.dart`:
+2.  **Add it to your catalog** in `lib/my_catalog.dart`. First the import, at the top with the other imports:
 
     ```dart
     import 'illustration.dart';
     ```
 
+    Then replace `myCatalog` at the bottom of the file with this version, which adds `illustration` to its components:
+
     ```dart
+    // 3. Your own catalog, which sits next to the basic one.
+    final myCatalog = CatalogImplementation(
+      id: 'https://example.com/potion_lab/catalog.json',
+      protocolVersion: A2uiProtocolVersion.v1_0,
       components: [potionBottle, illustration],
+    );
     ```
 
-3.  **Ask for it in the persona** in `lib/agent_service.dart`:
+3.  **Ask for it in the persona** in `lib/agent_service.dart`. In its list of what goes on the card, add a line that asks for an Illustration. In Potion Lab, it goes right under the heading line:
 
     ```dart
+    - a Card whose first child is the potion's name as a "## " heading
     - an Illustration of the potion, with a prompt that names a fun art style
     ```
 
@@ -1697,32 +1762,45 @@ A component's builder can do anything a widget can, including calling another AI
     }
     ```
 
-4.  **Add it to your catalog** in `lib/my_catalog.dart`:
+4.  **Add it to your catalog** in `lib/my_catalog.dart`. First the import, at the top with the other imports:
 
     ```dart
     import 'companion.dart';
     ```
 
+    Then replace `myCatalog` at the bottom of the file with this version, which adds `companion` to its components:
+
     ```dart
+    // 3. Your own catalog, which sits next to the basic one.
+    final myCatalog = CatalogImplementation(
+      id: 'https://example.com/potion_lab/catalog.json',
+      protocolVersion: A2uiProtocolVersion.v1_0,
       components: [potionBottle, illustration, companion],
+    );
     ```
 
-5.  **Tell the persona about its companion** in `lib/agent_service.dart`. The companion lives in its own surface, `companion`, and Gemini updates its mood through the data model on every answer:
+5.  **Tell the persona about its companion** in `lib/agent_service.dart`. The companion lives in its own surface, `companion`, and Gemini updates its mood through the data model on every answer. Add this paragraph to your persona, right after the line that ends with `Never answer with text only.` (shown first, for reference):
 
     ```dart
+    Give every new surface a new surfaceId and set "sendDataModel": true on it. Never answer with text only.
+
     You have a companion: a small 3D creature that lives in your shop and shows how you feel.
     In your very first answer, also create a surface with the surfaceId "companion" that holds only a Companion,
     with its mood bound to /mood and its color bound to /color. In every later answer, send an updateDataModel
     for the "companion" surface that sets /mood to how you feel now: happy, excited, sleepy or grumpy.
     ```
 
-6.  **Pin the companion to the top of the screen** in `lib/home_page.dart`. Show the `companion` surface above the feed, and leave it out of the feed itself:
+6.  **Pin the companion to the top of the screen** in `lib/home_page.dart`. In `_buildChat`, add the companion as the first child of the `Column`, before `// 1. The surfaces`:
 
     ```dart
+        return Column(
+          children: [
             // 0. The companion surface stays pinned at the top.
             for (final surface in _surfaces.where((s) => s.id == 'companion'))
               A2uiSurface(key: ObjectKey(surface), surface: surface),
     ```
+
+    Then leave it out of the feed: a little further down, in the `ListView`, change the `for` line to this:
 
     ```dart
                         for (final surface in _surfaces.reversed.where((s) => s.id != 'companion'))
