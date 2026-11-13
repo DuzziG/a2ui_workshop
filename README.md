@@ -83,6 +83,8 @@ All the examples in this guide build **Potion Lab**: a grumpy Potion Master inve
     flutter create my_a2ui_app
     cd my_a2ui_app
     ```
+    Want your own app name, such as `potion_lab`? Go for it, but change it in **both** lines. Use lowercase letters, numbers and underscores only.
+
     Run every command from this folder from now on.
 
 2.  **Add the packages.** All of them at once, so you won't stop for installs later:
