@@ -74,7 +74,7 @@ All the examples in this guide build **Potion Lab**: a grumpy Potion Master inve
 
 > **Can't open AI Studio?** School and work accounts sometimes have it switched off. Use a personal Google account instead.
 
-> **Keep your key private.** Anyone who has it can use your quota. Don't post it, and don't push it to GitHub: the next step keeps it in a file that Git ignores.
+> **Keep your key private.** Anyone who has it can use your quota. Don't post it, and don't push it to GitHub: the next step keeps it in a file that Git ignores. It's for the best if you delete it after you're done with this project. 
 
 ## Step 2: Create Your Project
 
