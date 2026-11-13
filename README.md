@@ -29,6 +29,8 @@ Two things make A2UI safe and fun to build with:
 * **Part 4, Make it truly yours:** design and draw your own component, and stream the UI in as Gemini writes it.
 * **Bonus:** AI-painted illustrations, and a 3D companion built with [Flutter Scene](https://pub.dev/packages/flutter_scene).
 
+> **Something not working?** Check [Troubleshooting](TROUBLESHOOTING.md) for the problems we've already hit.
+>
 > **Stuck?** The [`checkpoints`](checkpoints) folder holds the complete `lib/` folder at the end of every step. Copy one over yours, but keep your own `lib/firebase_options.dart`.
 
 ---
@@ -80,6 +82,8 @@ All the examples in this guide build **Potion Lab**: a grumpy Potion Master inve
     dart pub global activate flutterfire_cli
     ```
 
+    > **`flutterfire: command not found`?** The command was installed in a folder your terminal doesn't search yet. Add it to your `PATH` and open a new terminal, as shown in [Troubleshooting](TROUBLESHOOTING.md#1-flutterfire-is-not-found-after-installing-it). Or, for now, run `dart pub global run flutterfire_cli:flutterfire configure` in place of `flutterfire configure`.
+
 ## Step 2: Create Your Project
 
 1.  **Create the app** and go into its folder:
@@ -94,7 +98,7 @@ All the examples in this guide build **Potion Lab**: a grumpy Potion Master inve
     flutterfire configure
     ```
 
-    > **On a Mac, does it stop with `cannot load such file -- xcodeproj`?** FlutterFire needs the `xcodeproj` Ruby gem to add the iOS config to your Xcode project. Your Firebase apps were already created, so install the gem with `sudo gem install xcodeproj` and run `flutterfire configure` again, this time picking your existing project. Or skip iOS for now: select only **android** and **web**. Either way, check that `lib/firebase_options.dart` exists afterwards.
+    > **On a Mac, does it stop with `cannot load such file -- xcodeproj`?** FlutterFire needs the `xcodeproj` Ruby gem to add the iOS config to your Xcode project. Your Firebase apps were already created, so install the gem with `sudo gem install xcodeproj` and run `flutterfire configure` again, this time picking your existing project. Or skip iOS for now: select only **android** and **web**. Either way, check that `lib/firebase_options.dart` exists afterwards. [More in Troubleshooting](TROUBLESHOOTING.md#2-flutterfire-configure-stops-with-cannot-load-such-file----xcodeproj).
     >
     > **Did you create the project from here, with `<create a new project>`?** Then enable Gemini for it too: in the Firebase console, open your project, go to **AI Logic**, click **Get started** and choose the **Gemini Developer API**.
 
