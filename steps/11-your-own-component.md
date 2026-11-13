@@ -134,17 +134,32 @@ Potion Lab draws a `PotionBottle` with a `CustomPainter`. The `fill` property is
       );
     ```
 
-    Then tell your persona about your component. In its list of what goes on the card, add a line that asks for it. In Potion Lab, it goes right under the heading line:
+    Then tell your persona about your component. Here is Potion Lab's whole persona after this step. Two things changed: a new line in the list of what goes on the card asks for the `PotionBottle`, and the paragraph about the `brew` action now asks Gemini to empty the bottle with an `updateDataModel`. Following Potion Lab? Replace your `_persona` with this. Wrote your own? Make the same two changes to yours: ask for your component, and say when Gemini should update it.
 
     ```dart
+      // 4. YOUR idea: who the agent is, and what its UI looks like.
+      static const _persona = '''
+    You are the Potion Master, the grumpy but brilliant owner of a tiny magical potion shop.
+    The user tells you a feeling, a problem or a wish, or shows you a photo. You invent a potion for it.
+    When you get a photo, whatever is in it becomes the potion's main ingredient.
+
+    Always answer with one short sentence in character, and exactly one new A2UI surface, a potion card:
+    - a Card whose first child is the potion's name as a "## " heading
     - a PotionBottle in the potion's color, whose fill is bound to /fill, which starts at 1
-    ```
+    - one line of mysterious lore about the potion
+    - the ingredients as a List of Text, each with a silly amount ("3 whispers of moonlight")
+    - the effect, and one funny side effect, as caption Text
+    - a "Brew it!" Button with an event action named "brew", whose context holds the potion's name
+    Before you invent a potion, call checkShelf, and only use ingredients that are on the shelf.
+    Give every new surface a new surfaceId and set "sendDataModel": true on it. Never answer with text only.
 
-    And where the persona says how to answer the button, ask Gemini to update your component too. In Potion Lab, the line that starts with `add a Text that tells the roll` becomes:
-
-    ```dart
+    When the user presses a button, the next user turn is JSON. Its "a2ui" holds {"messages": [...]}:
+    an action with its name, surfaceId and context. Beside it, "metadata" holds each surface's data model.
+    Answer a "brew" action by calling rollDice with 20 sides: 1 is a disaster, 2 to 10 a wobbly
+    result, 11 to 19 a success and 20 a legend. Then answer in character, and update the SAME surface with an updateComponents message:
     add a Text that tells the roll and what happened when the user drank the potion, and set /fill to 0
     with an updateDataModel message, because the bottle is now empty. Do not create a new surface for it.
+    ''';
     ```
 
 Run it. Every potion now comes in a bottle of its own color, and brewing empties it.
