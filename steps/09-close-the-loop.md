@@ -1,6 +1,6 @@
 [← Step 8: Show It the World](08-show-it-the-world.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 10: Rules the AI Can't Bend →](10-rules-the-ai-cant-bend.md)
 
-*Part 3: Hand the AI the Pen*
+*Part 3: Hand the AI the Pen · Step 9 of 12*
 
 # Step 9: Close the Loop
 
@@ -151,6 +151,8 @@ The message Gemini receives looks like this:
 > 🧠 **What just happened:** you built the full A2UI loop. Gemini describes UI, the user acts on it, the action goes back, and Gemini updates the UI. Gemini sent an `updateComponents` for an existing surface instead of creating a new one, because your persona told it to.
 
 > 🎨 **Make it yours:** make your button do something. A *Feed* button that changes your pet's mood, a *Next room* button that redraws the dungeon, an *Answer* button that scores the quiz. Add inputs too (a `TextField`, a `ChoicePicker`): their values arrive in the data model.
+
+> **Stuck?** [`checkpoints/step_09`](../checkpoints/step_09/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays.
 
 ---
 

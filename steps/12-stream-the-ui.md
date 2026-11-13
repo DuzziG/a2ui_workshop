@@ -1,6 +1,6 @@
 [← Step 11: Your Own Component](11-your-own-component.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Bonus A: AI-Painted Illustrations →](bonus-a-ai-painted-illustrations.md)
 
-*Part 4: Make It Truly Yours*
+*Part 4: Make It Truly Yours · Step 12 of 12*
 
 # Step 12: Stream the UI
 
@@ -73,6 +73,8 @@ Then replace the whole `_generate` method with this streaming version:
 > 🧠 **What just happened:** each chunk Gemini streams is fed to the parser, which applies every message as soon as it is complete. The function calls from Step 10 still work: `sendStream` runs them between chunks.
 
 > 🎨 **Make it yours:** look at your persona's layout with fresh eyes. The first component Gemini writes appears first, so put the exciting part at the top.
+
+> **Stuck?** [`checkpoints/step_12`](../checkpoints/step_12/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays.
 
 ---
 

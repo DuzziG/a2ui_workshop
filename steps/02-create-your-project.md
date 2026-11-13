@@ -1,6 +1,6 @@
 [← Step 1: Get Your Gemini API Key](01-get-your-gemini-api-key.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 3: The App Shell →](03-the-app-shell.md)
 
-*Part 1: Set Up*
+*Part 1: Set Up · Step 2 of 12*
 
 # Step 2: Create Your Project
 

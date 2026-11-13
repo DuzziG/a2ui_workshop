@@ -1,6 +1,6 @@
 [← Step 9: Close the Loop](09-close-the-loop.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 11: Your Own Component →](11-your-own-component.md)
 
-*Part 3: Hand the AI the Pen*
+*Part 3: Hand the AI the Pen · Step 10 of 12*
 
 # Step 10: Rules the AI Can't Bend
 
@@ -170,6 +170,8 @@ Ask for a potion, brew it, and open X-ray. You'll see lines like `[function] rol
 > * the real date and time (the model doesn't know it)
 > * a list of quiz questions, levels or items that you wrote
 > * a timer, or a random pick from your own list
+
+> **Stuck?** [`checkpoints/step_10`](../checkpoints/step_10/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays.
 
 ---
 

@@ -1,6 +1,6 @@
 [← Step 5: Data and Actions, by Hand](05-data-and-actions-by-hand.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 7: Give It a Personality →](07-give-it-a-personality.md)
 
-*Part 3: Hand the AI the Pen*
+*Part 3: Hand the AI the Pen · Step 6 of 12*
 
 # Step 6: Gemini Writes the UI
 
@@ -206,6 +206,8 @@ Then press the **X-ray** button `</>` and read the reply.
 > 🧠 **What just happened:** Gemini wrote the same kinds of messages you wrote in Steps 4 and 5, wrapped in `<a2ui-json>` tags with some text around them. The prompt snippet taught it the format, and your catalog limited it to components your app can draw.
 
 > 🎨 **Make it yours:** ask for UI from *your* idea, and use X-ray to see how Gemini built it. Ask for something the basic catalog can't really do, such as a chess board or a chart. How does Gemini get by?
+
+> **Stuck?** [`checkpoints/step_06`](../checkpoints/step_06/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays.
 
 ---
 

@@ -1,6 +1,6 @@
 [← Step 2: Create Your Project](02-create-your-project.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 4: Your First Surface, by Hand →](04-your-first-surface-by-hand.md)
 
-*Part 1: Set Up*
+*Part 1: Set Up · Step 3 of 12*
 
 # Step 3: The App Shell
 
@@ -215,6 +215,8 @@ Run the app with `flutter run -d chrome` (or pick another device with `flutter r
 > 🧠 **What just happened:** your app is chatting with Gemini, but only in text. `HomePage` doesn't know where answers come from. Next we add UI to the answers, and `HomePage` won't change at all.
 
 > 🎨 **Make it yours:** rename the app in `main.dart`, pick a `seedColor` that fits your idea, and change the prompt box's hint text. Then change the system message in `agent_service.dart`, and see how Gemini's answers change.
+
+> **Stuck?** [`checkpoints/step_03`](../checkpoints/step_03/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays.
 
 ---
 

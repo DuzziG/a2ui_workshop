@@ -1,6 +1,6 @@
 [← Step 7: Give It a Personality](07-give-it-a-personality.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 9: Close the Loop →](09-close-the-loop.md)
 
-*Part 3: Hand the AI the Pen*
+*Part 3: Hand the AI the Pen · Step 8 of 12*
 
 # Step 8: Show It the World
 
@@ -150,6 +150,8 @@ Run it and send a photo of anything: your shoe, your lunch, your neighbor's cat.
 > 🧠 **What just happened:** the photo travelled as an attachment, in the same message as the text. Gemini looked at the picture, and your persona told it what to make of it.
 
 > 🎨 **Make it yours:** decide what a photo *means* in your app. In a Dungeon Master, the photo becomes the next room. In a Fridge Chef, it's the ingredients. In an Outfit Judge, it's the whole point. Update the persona and the text in `sendPhoto`. To use the camera on a phone, try `ImageSource.camera`.
+
+> **Stuck?** [`checkpoints/step_08`](../checkpoints/step_08/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays.
 
 ---
 

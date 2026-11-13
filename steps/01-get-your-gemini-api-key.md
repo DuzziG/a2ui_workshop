@@ -1,6 +1,6 @@
 [← Step 0: Pick Your Idea](00-pick-your-idea.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 2: Create Your Project →](02-create-your-project.md)
 
-*Part 1: Set Up*
+*Part 1: Set Up · Step 1 of 12*
 
 # Step 1: Get Your Gemini API Key
 

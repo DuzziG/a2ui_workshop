@@ -1,6 +1,6 @@
 [← Step 3: The App Shell](03-the-app-shell.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 5: Data and Actions, by Hand →](05-data-and-actions-by-hand.md)
 
-*Part 2: Speak A2UI*
+*Part 2: Speak A2UI · Step 4 of 12*
 
 Before an AI writes A2UI, you will write it yourself. Then, when Gemini does it, you'll recognize every line.
 
@@ -104,6 +104,8 @@ Run the app and send anything. Gemini answers, and your card appears.
 > 🧠 **What just happened:** you didn't write a single widget. You described a card, and `a2ui_flutter` turned it into a Material `Card`, `Column`, `Row`, `Icon` and `Text`. Texts can use a little Markdown: a line starting with `## ` becomes a heading.
 
 > 🎨 **Make it yours:** make this the welcome card of *your* app. Change the title and the icon (try `favorite`, `home`, `photo` or `shoppingCart`), and add a second `Row`. Break it on purpose too: rename `root`, or point a child at an id that doesn't exist. What happens?
+
+> **Stuck?** [`checkpoints/step_04`](../checkpoints/step_04/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays.
 
 ---
 

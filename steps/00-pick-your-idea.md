@@ -1,4 +1,4 @@
-[← Overview](../README.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 1: Get Your Gemini API Key →](01-get-your-gemini-api-key.md)
+[Overview](../README.md) &nbsp;·&nbsp; [Step 1: Get Your Gemini API Key →](01-get-your-gemini-api-key.md)
 
 # Step 0: Pick Your Idea
 
@@ -21,4 +21,4 @@ All the examples in this guide build **Potion Lab**: a grumpy Potion Master inve
 
 ---
 
-[← Overview](../README.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 1: Get Your Gemini API Key →](01-get-your-gemini-api-key.md)
+[Overview](../README.md) &nbsp;·&nbsp; [Step 1: Get Your Gemini API Key →](01-get-your-gemini-api-key.md)

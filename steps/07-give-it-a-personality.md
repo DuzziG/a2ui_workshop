@@ -1,6 +1,6 @@
 [← Step 6: Gemini Writes the UI](06-gemini-writes-the-ui.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 8: Show It the World →](08-show-it-the-world.md)
 
-*Part 3: Hand the AI the Pen*
+*Part 3: Hand the AI the Pen · Step 7 of 12*
 
 # Step 7: Give It a Personality
 
@@ -43,6 +43,8 @@ Run it and tell the Potion Master how you feel: *"I have an exam tomorrow"*, *"I
 > * **one button** with an action name, which we use in Step 9
 >
 > Tip: describe the layout as a list, like the example. The more specific you are, the more consistent your app looks.
+
+> **Stuck?** [`checkpoints/step_07`](../checkpoints/step_07/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays.
 
 ---
 

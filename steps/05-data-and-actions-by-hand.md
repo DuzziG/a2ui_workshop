@@ -1,6 +1,6 @@
 [← Step 4: Your First Surface, by Hand](04-your-first-surface-by-hand.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 6: Gemini Writes the UI →](06-gemini-writes-the-ui.md)
 
-*Part 2: Speak A2UI*
+*Part 2: Speak A2UI · Step 5 of 12*
 
 # Step 5: Data and Actions, by Hand
 
@@ -148,6 +148,8 @@ Run it, type a new name into the form and drag the slider: the preview text foll
 > 🧠 **What just happened:** the text field and the preview don't know about each other. They share a path in the data model, and A2UI keeps everything bound to it in sync. The button doesn't run any code of its own either: it emits an **action**. Right now `HomePage` shows it in a snack bar. In Step 9 it goes to Gemini.
 
 > 🎨 **Make it yours:** build the main form of your idea. A character creator with a name and a strength slider? A quiz answer box? Try a `CheckBox` (it binds a `true`/`false` value), or a `ChoicePicker` with `options`.
+
+> **Stuck?** [`checkpoints/step_05`](../checkpoints/step_05/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays.
 
 ---
 

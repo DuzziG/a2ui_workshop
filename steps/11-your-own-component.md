@@ -1,6 +1,6 @@
 [← Step 10: Rules the AI Can't Bend](10-rules-the-ai-cant-bend.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 12: Stream the UI →](12-stream-the-ui.md)
 
-*Part 4: Make It Truly Yours*
+*Part 4: Make It Truly Yours · Step 11 of 12*
 
 # Step 11: Your Own Component
 
@@ -158,6 +158,8 @@ Run it. Every potion now comes in a bottle of its own color, and brewing empties
 > * a **countdown** ring, a **trophy**, a **progress** path
 >
 > Start from the bottle: change the painter, rename the properties, and write good descriptions so Gemini knows what they mean. To level up, make it interactive: read about `props.writable` and `props.action` in the [a2ui_flutter docs](https://pub.dev/packages/a2ui_flutter#defining-custom-components).
+
+> **Stuck?** [`checkpoints/step_11`](../checkpoints/step_11/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays.
 
 ---
 

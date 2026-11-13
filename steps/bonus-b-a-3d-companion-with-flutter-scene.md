@@ -158,6 +158,8 @@ Run it, then make your agent happy, sleepy or grumpy, and watch its companion re
 
 > 🎨 **Make it yours:** build *your* companion. Give it ears (`SphereGeometry`), a hat (`CylinderGeometry`, `CapsuleGeometry`), a tail (`TorusGeometry`), or a body that isn't a sphere at all. Invent your own moods and how they move. Then let Gemini set more than the mood: a size, an outfit, a dance.
 
+> **Stuck?** [`checkpoints/bonus_b`](../checkpoints/bonus_b/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays.
+
 ---
 
 [← Bonus A: AI-Painted Illustrations](bonus-a-ai-painted-illustrations.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Show and Tell →](../README.md#show-and-tell)

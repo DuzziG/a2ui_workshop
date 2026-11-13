@@ -11,7 +11,7 @@ Each entry gives the step, what you see, why it happens and how to fix it.
 
 ## 1. The app only says "Paste your Gemini API key into lib/api_key.dart"
 
-**Step:** 3, The App Shell
+**Step:** [3, The App Shell](steps/03-the-app-shell.md)
 
 **Why:** `geminiApiKey` in `lib/api_key.dart` is still the placeholder, or is empty.
 
@@ -19,7 +19,7 @@ Each entry gives the step, what you see, why it happens and how to fix it.
 
 ## 2. `Error: ApiException(400): API key not valid. Please pass a valid API key.`
 
-**Step:** 3, The App Shell (the first message to Gemini)
+**Step:** [3, The App Shell](steps/03-the-app-shell.md) (the first message to Gemini)
 
 **Why:** the key in `lib/api_key.dart` isn't a working key. Usually part of it is missing, there's a space inside the quotes, or it was deleted in AI Studio.
 
@@ -27,7 +27,7 @@ Each entry gives the step, what you see, why it happens and how to fix it.
 
 ## 3. AI Studio won't open, or says it isn't available for your account
 
-**Step:** 1, Get Your Gemini API Key
+**Step:** [1, Get Your Gemini API Key](steps/01-get-your-gemini-api-key.md)
 
 **Why:** school and work Google accounts sometimes have AI Studio switched off by their admin.
 
@@ -35,7 +35,7 @@ Each entry gives the step, what you see, why it happens and how to fix it.
 
 ## 4. `Error: ApiException(429)`, or a message about quota or `RESOURCE_EXHAUSTED`
 
-**Step:** any step that calls Gemini, most often Bonus A (pictures)
+**Step:** any step that calls Gemini, most often [Bonus A](steps/bonus-a-ai-painted-illustrations.md) (pictures)
 
 **Why:** the free tier limits how many requests you can send per minute and per day. Pictures use it up faster than text.
 

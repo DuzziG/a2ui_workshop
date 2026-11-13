@@ -119,6 +119,8 @@ A component's builder can do anything a widget can, including calling another AI
 
 > 🎨 **Make it yours:** pick an art style that fits your app, such as pixel art, watercolor or a movie poster, and put it in the persona. Or let the user choose a style with a `ChoicePicker`.
 
+> **Stuck?** [`checkpoints/bonus_a`](../checkpoints/bonus_a/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays.
+
 ---
 
 [← Step 12: Stream the UI](12-stream-the-ui.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Bonus B: A 3D Companion with Flutter Scene →](bonus-b-a-3d-companion-with-flutter-scene.md)
