@@ -35,7 +35,9 @@ Two things make A2UI safe and fun to build with:
 
 ---
 
-## Step 0: Pick Your Idea
+<details>
+<summary><h2>Step 0: Pick Your Idea</h2></summary>
+
 
 Before writing any code, decide what your app is. Write it down in one sentence: *"My app is a ___ that ___."* You will turn that sentence into your agent's personality in Step 7.
 
@@ -54,6 +56,8 @@ All the examples in this guide build **Potion Lab**: a grumpy Potion Master inve
 
 > 🎨 **Make it yours:** a mix of two ideas is often the most fun. A quiz show hosted by a pirate? A pet that is also a dungeon?
 
+</details>
+
 ---
 
 # Part 1: Set Up
@@ -64,7 +68,9 @@ All the examples in this guide build **Potion Lab**: a grumpy Potion Master inve
 * **Somewhere to run it:** we recommend **Chrome**, which needs no extra setup. You can also run on a phone or as a desktop app: for iOS and macOS you need Xcode, and for Android you need Android Studio.
 * **A Google account**, to get a free Gemini API key in Step 1.
 
-## Step 1: Get Your Gemini API Key
+<details>
+<summary><h2>Step 1: Get Your Gemini API Key</h2></summary>
+
 
 > 🎯 **Goal:** a key that lets your app talk to Gemini. It takes about a minute.
 
@@ -76,7 +82,11 @@ All the examples in this guide build **Potion Lab**: a grumpy Potion Master inve
 
 > **Keep your key private.** Anyone who has it can use your quota. Don't post it, and don't push it to GitHub: the next step keeps it in a file that Git ignores. It's for the best if you delete it after you're done with this project. 
 
-## Step 2: Create Your Project
+</details>
+
+<details>
+<summary><h2>Step 2: Create Your Project</h2></summary>
+
 
 1.  **Create the app** and go into its folder:
     ```sh
@@ -113,7 +123,11 @@ All the examples in this guide build **Potion Lab**: a grumpy Potion Master inve
     echo "lib/api_key.dart" >> .gitignore
     ```
 
-## Step 3: The App Shell
+</details>
+
+<details>
+<summary><h2>Step 3: The App Shell</h2></summary>
+
 
 > 🎯 **Goal:** an app with a prompt box that chats with Gemini.
 
@@ -129,6 +143,9 @@ That way, most later steps only change the service.
 We create the files in the order they depend on each other, so your editor never shows an import that doesn't exist yet.
 
 1.  **Create `lib/agent_service.dart`.** It sends your messages to Gemini and returns its answers. It keeps the conversation in `_history`, so Gemini remembers what you said. The first message in it is a **system message**: instructions that tell Gemini how to behave. The service also owns a `MessageProcessor`, the A2UI renderer, which we use in the next step.
+
+    <details>
+    <summary>📄 <code>lib/agent_service.dart</code> (the whole file, 31 lines)</summary>
 
     ```dart
     // lib/agent_service.dart
@@ -164,7 +181,12 @@ We create the files in the order they depend on each other, so your editor never
     }
     ```
 
+    </details>
+
 2.  **Create `lib/home_page.dart`.** It shows three things, top to bottom: the surfaces, the agent's text reply, and the prompt box. They live in their own method, `_buildChat`, so we can put something next to them later. The page subscribes to the processor, so whenever a surface is created or deleted, the screen updates.
+
+    <details>
+    <summary>📄 <code>lib/home_page.dart</code> (the whole file, 122 lines)</summary>
 
     ```dart
     // lib/home_page.dart
@@ -291,6 +313,8 @@ We create the files in the order they depend on each other, so your editor never
     }
     ```
 
+    </details>
+
 3.  **Replace `lib/main.dart`.** It shows the home page, or a reminder if you haven't pasted your API key yet.
 
     ```dart
@@ -327,13 +351,17 @@ Run the app with `flutter run -d chrome` (or pick another device with `flutter r
 
 > 🎨 **Make it yours:** rename the app in `main.dart`, pick a `seedColor` that fits your idea, and change the prompt box's hint text. Then change the system message in `agent_service.dart`, and see how Gemini's answers change.
 
+</details>
+
 ---
 
 # Part 2: Speak A2UI
 
 Before an AI writes A2UI, you will write it yourself. Then, when Gemini does it, you'll recognize every line.
 
-## Step 4: Your First Surface, by Hand
+<details>
+<summary><h2>Step 4: Your First Surface, by Hand</h2></summary>
+
 
 > 🎯 **Goal:** Gemini still writes the text answer. Next to it, draw a card from JSON you write yourself.
 
@@ -352,6 +380,9 @@ root (Card)
 ```
 
 **Update `lib/agent_service.dart`.** `send` still asks Gemini for its answer (now in `_ask`), and then calls `_draw`, which draws a card you wrote by hand:
+
+<details>
+<summary>📄 <code>lib/agent_service.dart</code> (the whole file, 72 lines)</summary>
 
 ```dart
 // lib/agent_service.dart
@@ -428,13 +459,19 @@ class AgentService {
 }
 ```
 
+</details>
+
 Run the app and send anything. Gemini answers, and your card appears.
 
 > 🧠 **What just happened:** you didn't write a single widget. You described a card, and `a2ui_flutter` turned it into a Material `Card`, `Column`, `Row`, `Icon` and `Text`. Texts can use a little Markdown: a line starting with `## ` becomes a heading.
 
 > 🎨 **Make it yours:** make this the welcome card of *your* app. Change the title and the icon (try `favorite`, `home`, `photo` or `shoppingCart`), and add a second `Row`. Break it on purpose too: rename `root`, or point a child at an id that doesn't exist. What happens?
 
-## Step 5: Data and Actions, by Hand
+</details>
+
+<details>
+<summary><h2>Step 5: Data and Actions, by Hand</h2></summary>
+
 
 > 🎯 **Goal:** a form whose inputs, texts and button are wired together, still without AI.
 
@@ -445,6 +482,9 @@ Every surface has a **data model**: a JSON object that belongs to the surface. C
 * A Button has an **action**. Pressing it emits an event with a name and a `context` read from the data model.
 
 1.  **Update `lib/agent_service.dart`.** Only `_draw` changes. There is a new message, `updateDataModel`, which fills the data model.
+
+    <details>
+    <summary>📄 <code>lib/agent_service.dart</code> (the whole file, 105 lines)</summary>
 
     ```dart
     // lib/agent_service.dart
@@ -554,6 +594,8 @@ Every surface has a **data model**: a JSON object that belongs to the surface. C
     }
     ```
 
+    </details>
+
 2.  **Listen for actions in `lib/home_page.dart`.** Replace `initState` with this version, which adds the `onAction` line at its end, and add the new `_showAction` method right below it:
 
     ```dart
@@ -581,11 +623,15 @@ Run it, type a new name into the form and drag the slider: the preview text foll
 
 > 🎨 **Make it yours:** build the main form of your idea. A character creator with a name and a strength slider? A quiz answer box? Try a `CheckBox` (it binds a `true`/`false` value), or a `ChoicePicker` with `options`.
 
+</details>
+
 ---
 
 # Part 3: Hand the AI the Pen
 
-## Step 6: Gemini Writes the UI
+<details>
+<summary><h2>Step 6: Gemini Writes the UI</h2></summary>
+
 
 > 🎯 **Goal:** replace your hand-written JSON with Gemini's.
 
@@ -595,6 +641,9 @@ How does Gemini learn A2UI? The `a2ui_agent` package handles both sides:
 * `StreamedAnswer` reads Gemini's reply. Text goes back to the page, and every `<a2ui-json>` block is checked against your catalog and handed to the processor. Anything that breaks the rules is rejected instead of drawn.
 
 1.  **Update `lib/agent_service.dart`.** The hand-written messages are gone: Gemini writes them now. The system message now holds the prompt snippet, so Gemini learns A2UI before your first message.
+
+    <details>
+    <summary>📄 <code>lib/agent_service.dart</code> (the whole file, 62 lines)</summary>
 
     ```dart
     // lib/agent_service.dart
@@ -661,7 +710,12 @@ How does Gemini learn A2UI? The `a2ui_agent` package handles both sides:
     }
     ```
 
+    </details>
+
 2.  **Create `lib/xray_view.dart`.** The X-ray view shows Gemini's raw reply, so you can see the JSON behind the UI. It indents every `<a2ui-json>` block so it's easy to read, and has a button to copy the reply.
+
+    <details>
+    <summary>📄 <code>lib/xray_view.dart</code> (the whole file, 63 lines)</summary>
 
     ```dart
     // lib/xray_view.dart
@@ -729,6 +783,8 @@ How does Gemini learn A2UI? The `a2ui_agent` package handles both sides:
     }
     ```
 
+    </details>
+
 3.  **Show it from `lib/home_page.dart`.** Add the import at the top, with the other imports:
 
     ```dart
@@ -743,6 +799,9 @@ How does Gemini learn A2UI? The `a2ui_agent` package handles both sides:
     ```
 
     Then replace the whole `build` method with this one. It gives the `AppBar` a button that toggles the X-ray, and chooses the body by screen width. On a wide screen, such as Chrome on a laptop, the chat and the X-ray sit side by side. On a narrow screen, the X-ray fills it until you press the button again. `_buildChat` below it stays the same.
+
+    <details>
+    <summary>📄 The code (31 lines)</summary>
 
     ```dart
       @override
@@ -778,6 +837,8 @@ How does Gemini learn A2UI? The `a2ui_agent` package handles both sides:
       }
     ```
 
+    </details>
+
 Run it and ask for anything:
 
 * *"A sign-up form for a newsletter"*
@@ -790,7 +851,11 @@ Then press the **X-ray** button `</>` and read the reply.
 
 > 🎨 **Make it yours:** ask for UI from *your* idea, and use X-ray to see how Gemini built it. Ask for something the basic catalog can't really do, such as a chess board or a chart. How does Gemini get by?
 
-## Step 7: Give It a Personality
+</details>
+
+<details>
+<summary><h2>Step 7: Give It a Personality</h2></summary>
+
 
 > 🎯 **Goal:** turn a general assistant into *your* app.
 
@@ -832,7 +897,11 @@ Run it and tell the Potion Master how you feel: *"I have an exam tomorrow"*, *"I
 >
 > Tip: describe the layout as a list, like the example. The more specific you are, the more consistent your app looks.
 
-## Step 8: Show It the World
+</details>
+
+<details>
+<summary><h2>Step 8: Show It the World</h2></summary>
+
 
 > 🎯 **Goal:** send a photo, get UI back.
 
@@ -841,6 +910,9 @@ Gemini is **multimodal**: it understands images as well as text. One message can
 1.  **Set up the image picker**, which you added in Step 2. On the web and Android there is nothing to do. On iOS, add `NSPhotoLibraryUsageDescription` to `ios/Runner/Info.plist`. On macOS, add the `com.apple.security.files.user-selected.read-only` entitlement. See the [image_picker docs](https://pub.dev/packages/image_picker) for details.
 
 2.  **Update `lib/agent_service.dart`.** Both kinds of message now go through one `_generate` method. `sendPhoto` attaches the picture to a short instruction as a `DataPart`: the photo's bytes and their type. We also tell the persona what to do with photos.
+
+    <details>
+    <summary>📄 <code>lib/agent_service.dart</code> (the whole file, 88 lines)</summary>
 
     ```dart
     // lib/agent_service.dart
@@ -933,6 +1005,8 @@ Gemini is **multimodal**: it understands images as well as text. One message can
     }
     ```
 
+    </details>
+
 3.  **Add a photo button to `lib/home_page.dart`.** Add the import at the top, with the other imports:
 
     ```dart
@@ -981,7 +1055,11 @@ Run it and send a photo of anything: your shoe, your lunch, your neighbor's cat.
 
 > 🎨 **Make it yours:** decide what a photo *means* in your app. In a Dungeon Master, the photo becomes the next room. In a Fridge Chef, it's the ingredients. In an Outfit Judge, it's the whole point. Update the persona and the text in `sendPhoto`. To use the camera on a phone, try `ImageSource.camera`.
 
-## Step 9: Close the Loop
+</details>
+
+<details>
+<summary><h2>Step 9: Close the Loop</h2></summary>
+
 
 > 🎯 **Goal:** buttons in Gemini's UI talk back to Gemini.
 
@@ -990,6 +1068,9 @@ So far, UI only flows one way. Remember the action from Step 5? Now we send it t
 Gemini already remembers the conversation (that's `_history`, from Step 3), so it knows which surfaces it created. What's missing is the action itself. We send it as **JSON**, with the surface's current data model beside it, so Gemini knows what was pressed and what the user entered.
 
 1.  **Update `lib/agent_service.dart`.** The persona explains the action messages and how to answer them, and `sendAction` sends them.
+
+    <details>
+    <summary>📄 <code>lib/agent_service.dart</code> (the whole file, 105 lines)</summary>
 
     ```dart
     // lib/agent_service.dart
@@ -1099,6 +1180,8 @@ Gemini already remembers the conversation (that's `_history`, from Step 3), so i
     }
     ```
 
+    </details>
+
 2.  **Send actions to the agent in `lib/home_page.dart`.** Replace `initState` with this version: its last line now sends each action to the agent. Then delete the `_showAction` method from Step 5, which nothing uses anymore.
 
     ```dart
@@ -1131,7 +1214,11 @@ The message Gemini receives looks like this:
 
 > 🎨 **Make it yours:** make your button do something. A *Feed* button that changes your pet's mood, a *Next room* button that redraws the dungeon, an *Answer* button that scores the quiz. Add inputs too (a `TextField`, a `ChoicePicker`): their values arrive in the data model.
 
-## Step 10: Rules the AI Can't Bend
+</details>
+
+<details>
+<summary><h2>Step 10: Rules the AI Can't Bend</h2></summary>
+
 
 > 🎯 **Goal:** your code decides the things that matter, and Gemini follows.
 
@@ -1140,6 +1227,9 @@ Ask a model to "roll a die" and it will happily pick whatever number makes a goo
 Each function is a `Tool`: a name, a description, a schema for its inputs, and `onCall`, the Dart code that runs. When Gemini asks for one, `dartantic_ai` runs it, hands the result back to Gemini, and Gemini carries on, all inside one `send` call.
 
 **Update `lib/agent_service.dart`.** Add the functions and pass them to the agent with `tools`. The persona tells Gemini when to call them. Every call is logged into the X-ray view, so you can watch it happen.
+
+<details>
+<summary>📄 <code>lib/agent_service.dart</code> (the whole file, 146 lines)</summary>
 
 ```dart
 // lib/agent_service.dart
@@ -1290,6 +1380,8 @@ add a Text that tells the roll and what happened when the user drank the potion.
 }
 ```
 
+</details>
+
 Ask for a potion, brew it, and open X-ray. You'll see lines like `[function] rollDice(sides: 20) -> 17` above Gemini's reply.
 
 > 🧠 **What just happened:** Gemini can't roll the die itself, so it *asks* your app to, and has to use the result. The truth lives in your code; the AI tells the story around it.
@@ -1300,11 +1392,15 @@ Ask for a potion, brew it, and open X-ray. You'll see lines like `[function] rol
 > * a list of quiz questions, levels or items that you wrote
 > * a timer, or a random pick from your own list
 
+</details>
+
 ---
 
 # Part 4: Make It Truly Yours
 
-## Step 11: Your Own Component
+<details>
+<summary><h2>Step 11: Your Own Component</h2></summary>
+
 
 > 🎯 **Goal:** design and draw a widget, and let Gemini use it like any built-in one.
 
@@ -1317,6 +1413,9 @@ The basic catalog only gets you so far. Now you add a component that exists only
 Potion Lab draws a `PotionBottle` with a `CustomPainter`. The `fill` property is bound to the data model, so when Gemini sets `/fill` to 0 after a brew, the liquid drains away with an animation.
 
 1.  **Create `lib/my_catalog.dart`.** The schema is written with `json_schema_builder`, which you added in Step 2:
+
+    <details>
+    <summary>📄 <code>lib/my_catalog.dart</code> (the whole file, 90 lines)</summary>
 
     ```dart
     // lib/my_catalog.dart
@@ -1411,6 +1510,8 @@ Potion Lab draws a `PotionBottle` with a `CustomPainter`. The `fill` property is
     }
     ```
 
+    </details>
+
 2.  **Register your catalog in `lib/agent_service.dart`.** Add the import at the top, with the other imports:
 
     ```dart
@@ -1461,7 +1562,11 @@ Run it. Every potion now comes in a bottle of its own color, and brewing empties
 >
 > Start from the bottle: change the painter, rename the properties, and write good descriptions so Gemini knows what they mean. To level up, make it interactive: read about `props.writable` and `props.action` in the [a2ui_flutter docs](https://pub.dev/packages/a2ui_flutter#defining-custom-components).
 
-## Step 12: Stream the UI
+</details>
+
+<details>
+<summary><h2>Step 12: Stream the UI</h2></summary>
+
 
 > 🎯 **Goal:** watch the UI build itself while Gemini is still writing it.
 
@@ -1496,6 +1601,9 @@ Replace parts 2 and 3 (the renderer and the A2UI agent kit) with:
 
 Then replace the whole `_generate` method with this streaming version:
 
+<details>
+<summary>📄 The code (28 lines)</summary>
+
 ```dart
   // Streams one message to Gemini, with any attachments, and draws the reply as it arrives.
   Future<String> _generate(String prompt, [List<Part> attachments = const []]) async {
@@ -1527,23 +1635,32 @@ Then replace the whole `_generate` method with this streaming version:
   }
 ```
 
+</details>
+
 `HomePage` doesn't change: it already keeps the surfaces on screen while it loads.
 
 > 🧠 **What just happened:** each chunk Gemini streams is fed to the parser, which applies every message as soon as it is complete. The function calls from Step 10 still work: `sendStream` runs them between chunks.
 
 > 🎨 **Make it yours:** look at your persona's layout with fresh eyes. The first component Gemini writes appears first, so put the exciting part at the top.
 
+</details>
+
 ---
 
 # Bonus Steps
 
-## Bonus A: AI-Painted Illustrations
+<details>
+<summary><h2>Bonus A: AI-Painted Illustrations</h2></summary>
+
 
 > 🎯 **Goal:** a component that asks an image model to paint a picture.
 
 A component's builder can do anything a widget can, including calling another AI. `Illustration` takes a `prompt` that Gemini writes, and an image model paints it.
 
 1.  **Create `lib/illustration.dart`.** It asks an image model for a picture with `generateMedia`. A cache stops it from painting the same picture twice when the surface rebuilds.
+
+    <details>
+    <summary>📄 <code>lib/illustration.dart</code> (the whole file, 78 lines)</summary>
 
     ```dart
     // lib/illustration.dart
@@ -1626,6 +1743,8 @@ A component's builder can do anything a widget can, including calling another AI
     }
     ```
 
+    </details>
+
 2.  **Add it to your catalog** in `lib/my_catalog.dart`. First the import, at the top with the other imports:
 
     ```dart
@@ -1654,7 +1773,11 @@ A component's builder can do anything a widget can, including calling another AI
 
 > 🎨 **Make it yours:** pick an art style that fits your app, such as pixel art, watercolor or a movie poster, and put it in the persona. Or let the user choose a style with a `ChoicePicker`.
 
-## Bonus B: A 3D Companion with Flutter Scene
+</details>
+
+<details>
+<summary><h2>Bonus B: A 3D Companion with Flutter Scene</h2></summary>
+
 
 > 🎯 **Goal:** give your agent a body: a 3D creature whose mood Gemini controls.
 
@@ -1668,6 +1791,9 @@ A component's builder can do anything a widget can, including calling another AI
 2.  **Turn on Flutter GPU.** On the **web** there is nothing to do, so Chrome is the easiest way to try this step. On other platforms, run with `flutter run --enable-flutter-gpu`, or follow the [Enable Flutter GPU](https://pub.dev/packages/flutter_scene#enable-flutter-gpu) steps to switch it on for good. The first build takes longer, because Flutter Scene compiles its shaders.
 
 3.  **Create `lib/companion.dart`.** The creature is one `Node` with a body and four eyeball spheres as its children, so moving the parent moves them all. `onTick` runs every frame and picks a bounce, spin and squash for the current mood.
+
+    <details>
+    <summary>📄 <code>lib/companion.dart</code> (the whole file, 90 lines)</summary>
 
     ```dart
     // lib/companion.dart
@@ -1762,6 +1888,8 @@ A component's builder can do anything a widget can, including calling another AI
     }
     ```
 
+    </details>
+
 4.  **Add it to your catalog** in `lib/my_catalog.dart`. First the import, at the top with the other imports:
 
     ```dart
@@ -1809,6 +1937,8 @@ A component's builder can do anything a widget can, including calling another AI
 Run it, then make your agent happy, sleepy or grumpy, and watch its companion react.
 
 > 🎨 **Make it yours:** build *your* companion. Give it ears (`SphereGeometry`), a hat (`CylinderGeometry`, `CapsuleGeometry`), a tail (`TorusGeometry`), or a body that isn't a sphere at all. Invent your own moods and how they move. Then let Gemini set more than the mood: a size, an outfit, a dance.
+
+</details>
 
 ---
 
