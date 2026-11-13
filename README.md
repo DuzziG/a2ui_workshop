@@ -303,6 +303,7 @@ We create the files in the order they depend on each other, so your editor never
         final hasKey = geminiApiKey.isNotEmpty && !geminiApiKey.startsWith('PASTE');
         return MaterialApp(
           title: 'My A2UI App',
+          debugShowCheckedModeBanner: false, // The DEBUG banner would cover the app bar's buttons.
           theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
           home: hasKey
               ? const HomePage(title: 'My A2UI App')
