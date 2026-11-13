@@ -5,9 +5,6 @@ In this workshop you build an app where an AI doesn't answer with text: it answe
 
 The app is **yours**. You pick the idea in Step 0, and every step ends with a **Make it yours** challenge. By the end, no two apps in the room will look alike.
 
-<p align="center"><img src="docs/preview.png" width="320" alt="A potion card with a hand-drawn potion bottle, under a purple 3D companion with googly eyes"></p>
-<p align="center"><em>The example app, Potion Lab: a potion card with a custom-drawn bottle, and the 3D companion from the bonus step.</em></p>
-
 ## What is A2UI?
 
 [A2UI](https://a2ui.org/) (Agent-to-UI) is an open protocol in which an AI agent **describes** a user interface as JSON ("a Card with a heading, a slider and a button"), and your app **draws** it with its own native widgets.
