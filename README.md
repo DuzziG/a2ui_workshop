@@ -72,8 +72,6 @@ All the examples in this guide build **Potion Lab**: a grumpy Potion Master inve
 2.  Click **Create API key**.
 3.  **Keep this tab open.** You'll copy the key from it at the end of Step 2, right when you need it.
 
-That's the whole setup: no project to configure and no command line tools to install. The free tier is plenty for this workshop.
-
 > **Can't open AI Studio?** School and work accounts sometimes have it switched off. Use a personal Google account instead.
 
 > **Keep your key private.** Anyone who has it can use your quota. Don't post it, and don't push it to GitHub: the next step keeps it in a file that Git ignores.
