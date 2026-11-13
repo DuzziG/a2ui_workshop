@@ -164,7 +164,7 @@ We create the files in the order they depend on each other, so your editor never
     }
     ```
 
-2.  **Create `lib/home_page.dart`.** It shows three things, top to bottom: the surfaces, the agent's text reply, and the prompt box. It subscribes to the processor, so whenever a surface is created or deleted, the screen updates.
+2.  **Create `lib/home_page.dart`.** It shows three things, top to bottom: the surfaces, the agent's text reply, and the prompt box. They live in their own method, `_buildChat`, so we can put something next to them later. The page subscribes to the processor, so whenever a surface is created or deleted, the screen updates.
 
     ```dart
     // lib/home_page.dart
@@ -233,53 +233,59 @@ We create the files in the order they depend on each other, so your editor never
         final colors = Theme.of(context).colorScheme;
         return Scaffold(
           appBar: AppBar(backgroundColor: colors.inversePrimary, title: Text(widget.title)),
-          body: Column(
-            children: [
-              // 1. The surfaces: newest at the bottom, like a chat.
-              Expanded(
-                child: _surfaces.isEmpty
-                    ? const Center(child: Text('Nothing here yet. Ask for something!'))
-                    : ListView(
-                        reverse: true,
-                        padding: const EdgeInsets.all(16),
-                        children: [
-                          for (final surface in _surfaces.reversed)
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 12),
-                              child: A2uiSurface(key: ObjectKey(surface), surface: surface),
-                            ),
-                        ],
-                      ),
+          body: _buildChat(context),
+        );
+      }
+
+      // The chat: the surfaces, the agent's reply and the prompt box.
+      Widget _buildChat(BuildContext context) {
+        final colors = Theme.of(context).colorScheme;
+        return Column(
+          children: [
+            // 1. The surfaces: newest at the bottom, like a chat.
+            Expanded(
+              child: _surfaces.isEmpty
+                  ? const Center(child: Text('Nothing here yet. Ask for something!'))
+                  : ListView(
+                      reverse: true,
+                      padding: const EdgeInsets.all(16),
+                      children: [
+                        for (final surface in _surfaces.reversed)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: A2uiSurface(key: ObjectKey(surface), surface: surface),
+                          ),
+                      ],
+                    ),
+            ),
+            // 2. The agent's text reply, and a progress bar while it works.
+            if (_isLoading) const LinearProgressIndicator(),
+            if (_reply.isNotEmpty)
+              Container(
+                width: double.infinity,
+                color: colors.secondaryContainer,
+                padding: const EdgeInsets.all(12),
+                child: Text(_reply),
               ),
-              // 2. The agent's text reply, and a progress bar while it works.
-              if (_isLoading) const LinearProgressIndicator(),
-              if (_reply.isNotEmpty)
-                Container(
-                  width: double.infinity,
-                  color: colors.secondaryContainer,
-                  padding: const EdgeInsets.all(12),
-                  child: Text(_reply),
-                ),
-              // 3. The prompt box.
-              SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _promptController,
-                          decoration: const InputDecoration(hintText: 'Ask for something...', border: OutlineInputBorder()),
-                          onSubmitted: (_) => _sendPrompt(),
-                        ),
+            // 3. The prompt box.
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _promptController,
+                        decoration: const InputDecoration(hintText: 'Ask for something...', border: OutlineInputBorder()),
+                        onSubmitted: (_) => _sendPrompt(),
                       ),
-                      IconButton.filled(onPressed: _isLoading ? null : _sendPrompt, icon: const Icon(Icons.send)),
-                    ],
-                  ),
+                    ),
+                    IconButton.filled(onPressed: _isLoading ? null : _sendPrompt, icon: const Icon(Icons.send)),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         );
       }
     }
@@ -650,14 +656,82 @@ How does Gemini learn A2UI? The `a2ui_agent` package handles both sides:
     }
     ```
 
-2.  **Add an X-ray view to `lib/home_page.dart`.** It shows Gemini's raw reply, so you can see the JSON behind the UI. Add a `_showXray` field to the state class:
+2.  **Create `lib/xray_view.dart`.** The X-ray view shows Gemini's raw reply, so you can see the JSON behind the UI. It indents every `<a2ui-json>` block so it's easy to read, and has a button to copy the reply.
+
+    ```dart
+    // lib/xray_view.dart
+    import 'dart:convert';
+    import 'package:flutter/material.dart';
+    import 'package:flutter/services.dart';
+
+    // Shows Gemini's raw reply, with every A2UI block pretty-printed.
+    class XrayView extends StatelessWidget {
+      const XrayView({super.key, required this.reply});
+      final String reply;
+
+      @override
+      Widget build(BuildContext context) {
+        final text = reply.isEmpty ? 'No reply yet. Ask Gemini for something!' : _prettify(reply);
+        return ColoredBox(
+          color: const Color(0xFF1E1E2E),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // A header with a copy button.
+              Container(
+                color: Colors.black26,
+                padding: const EdgeInsets.only(left: 16),
+                child: Row(
+                  children: [
+                    const Expanded(
+                      child: Text("X-ray: Gemini's last reply", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
+                    ),
+                    IconButton(
+                      tooltip: 'Copy',
+                      icon: const Icon(Icons.copy, color: Colors.white70, size: 18),
+                      onPressed: () => Clipboard.setData(ClipboardData(text: text)),
+                    ),
+                  ],
+                ),
+              ),
+              // The reply itself, scrollable and selectable.
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: SelectableText(
+                    text,
+                    style: const TextStyle(fontFamily: 'monospace', fontSize: 13, height: 1.4, color: Color(0xFFA6E3A1)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+
+      // Indents the JSON inside every <a2ui-json> block, so it's easy to read.
+      static String _prettify(String reply) => reply.replaceAllMapped(
+        RegExp(r'<a2ui-json>(.*?)</a2ui-json>', dotAll: true),
+        (match) {
+          try {
+            final json = const JsonEncoder.withIndent('  ').convert(jsonDecode(match[1]!));
+            return '<a2ui-json>\n$json\n</a2ui-json>';
+          } on FormatException {
+            return match[0]!; // Not valid JSON: show it as it is.
+          }
+        },
+      );
+    }
+    ```
+
+3.  **Show it from `lib/home_page.dart`.** Import `xray_view.dart`, and add a `_showXray` field to the state class:
 
     ```dart
       bool _isLoading = false;
       bool _showXray = false;
     ```
 
-    Give the `AppBar` a button that toggles it:
+    Give the `AppBar` a button that toggles it, and choose the body by screen width. On a wide screen, such as Chrome on a laptop, the chat and the X-ray sit side by side. On a narrow screen, the X-ray fills it until you press the button again:
 
     ```dart
           appBar: AppBar(
@@ -671,24 +745,22 @@ How does Gemini learn A2UI? The `a2ui_agent` package handles both sides:
               ),
             ],
           ),
-    ```
-
-    And show the panel just above the prompt box:
-
-    ```dart
-              if (_showXray)
-                Container(
-                  height: 200,
-                  width: double.infinity,
-                  color: Colors.black87,
-                  padding: const EdgeInsets.all(8),
-                  child: SingleChildScrollView(
-                    child: SelectableText(
-                      _agent.lastRawReply.isEmpty ? 'No reply yet.' : _agent.lastRawReply,
-                      style: const TextStyle(fontFamily: 'monospace', fontSize: 11, color: Colors.greenAccent),
-                    ),
-                  ),
+          // X-ray off: just the chat. On a wide screen: the chat and the X-ray side by side.
+          // On a narrow screen: the X-ray fills the screen.
+          body: !_showXray
+              ? _buildChat(context)
+              : LayoutBuilder(
+                  builder: (context, constraints) => constraints.maxWidth >= 800
+                      ? Row(
+                          children: [
+                            Expanded(child: _buildChat(context)),
+                            Expanded(child: XrayView(reply: _agent.lastRawReply)),
+                          ],
+                        )
+                      : XrayView(reply: _agent.lastRawReply),
                 ),
+        );
+      }
     ```
 
 Run it and ask for anything:
@@ -863,7 +935,7 @@ Gemini is **multimodal**: it understands images as well as text. One message can
     ```
 
     ```dart
-                      IconButton(onPressed: _isLoading ? null : _sendPhoto, icon: const Icon(Icons.photo_camera)),
+                    IconButton(onPressed: _isLoading ? null : _sendPhoto, icon: const Icon(Icons.photo_camera)),
     ```
 
 Run it and send a photo of anything: your shoe, your lunch, your neighbor's cat.
@@ -1647,13 +1719,13 @@ A component's builder can do anything a widget can, including calling another AI
 6.  **Pin the companion to the top of the screen** in `lib/home_page.dart`. Show the `companion` surface above the feed, and leave it out of the feed itself:
 
     ```dart
-              // 0. The companion surface stays pinned at the top.
-              for (final surface in _surfaces.where((s) => s.id == 'companion'))
-                A2uiSurface(key: ObjectKey(surface), surface: surface),
+            // 0. The companion surface stays pinned at the top.
+            for (final surface in _surfaces.where((s) => s.id == 'companion'))
+              A2uiSurface(key: ObjectKey(surface), surface: surface),
     ```
 
     ```dart
-                          for (final surface in _surfaces.reversed.where((s) => s.id != 'companion'))
+                        for (final surface in _surfaces.reversed.where((s) => s.id != 'companion'))
     ```
 
 Run it, then make your agent happy, sleepy or grumpy, and watch its companion react.

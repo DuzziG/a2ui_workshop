@@ -73,53 +73,59 @@ class _HomePageState extends State<HomePage> {
     final colors = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(backgroundColor: colors.inversePrimary, title: Text(widget.title)),
-      body: Column(
-        children: [
-          // 1. The surfaces: newest at the bottom, like a chat.
-          Expanded(
-            child: _surfaces.isEmpty
-                ? const Center(child: Text('Nothing here yet. Ask for something!'))
-                : ListView(
-                    reverse: true,
-                    padding: const EdgeInsets.all(16),
-                    children: [
-                      for (final surface in _surfaces.reversed)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: A2uiSurface(key: ObjectKey(surface), surface: surface),
-                        ),
-                    ],
-                  ),
+      body: _buildChat(context),
+    );
+  }
+
+  // The chat: the surfaces, the agent's reply and the prompt box.
+  Widget _buildChat(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Column(
+      children: [
+        // 1. The surfaces: newest at the bottom, like a chat.
+        Expanded(
+          child: _surfaces.isEmpty
+              ? const Center(child: Text('Nothing here yet. Ask for something!'))
+              : ListView(
+                  reverse: true,
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    for (final surface in _surfaces.reversed)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: A2uiSurface(key: ObjectKey(surface), surface: surface),
+                      ),
+                  ],
+                ),
+        ),
+        // 2. The agent's text reply, and a progress bar while it works.
+        if (_isLoading) const LinearProgressIndicator(),
+        if (_reply.isNotEmpty)
+          Container(
+            width: double.infinity,
+            color: colors.secondaryContainer,
+            padding: const EdgeInsets.all(12),
+            child: Text(_reply),
           ),
-          // 2. The agent's text reply, and a progress bar while it works.
-          if (_isLoading) const LinearProgressIndicator(),
-          if (_reply.isNotEmpty)
-            Container(
-              width: double.infinity,
-              color: colors.secondaryContainer,
-              padding: const EdgeInsets.all(12),
-              child: Text(_reply),
-            ),
-          // 3. The prompt box.
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _promptController,
-                      decoration: const InputDecoration(hintText: 'Ask for something...', border: OutlineInputBorder()),
-                      onSubmitted: (_) => _sendPrompt(),
-                    ),
+        // 3. The prompt box.
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _promptController,
+                    decoration: const InputDecoration(hintText: 'Ask for something...', border: OutlineInputBorder()),
+                    onSubmitted: (_) => _sendPrompt(),
                   ),
-                  IconButton.filled(onPressed: _isLoading ? null : _sendPrompt, icon: const Icon(Icons.send)),
-                ],
-              ),
+                ),
+                IconButton.filled(onPressed: _isLoading ? null : _sendPrompt, icon: const Icon(Icons.send)),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

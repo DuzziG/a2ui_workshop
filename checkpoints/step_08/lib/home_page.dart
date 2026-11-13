@@ -4,6 +4,7 @@ import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'agent_service.dart';
+import 'xray_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -93,67 +94,73 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // 1. The surfaces: newest at the bottom, like a chat.
-          Expanded(
-            child: _surfaces.isEmpty
-                ? const Center(child: Text('Nothing here yet. Ask for something!'))
-                : ListView(
-                    reverse: true,
-                    padding: const EdgeInsets.all(16),
-                    children: [
-                      for (final surface in _surfaces.reversed)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: A2uiSurface(key: ObjectKey(surface), surface: surface),
-                        ),
-                    ],
-                  ),
-          ),
-          // 2. The agent's text reply, and a progress bar while it works.
-          if (_isLoading) const LinearProgressIndicator(),
-          if (_reply.isNotEmpty)
-            Container(
-              width: double.infinity,
-              color: colors.secondaryContainer,
-              padding: const EdgeInsets.all(12),
-              child: Text(_reply),
+      // X-ray off: just the chat. On a wide screen: the chat and the X-ray side by side.
+      // On a narrow screen: the X-ray fills the screen.
+      body: !_showXray
+          ? _buildChat(context)
+          : LayoutBuilder(
+              builder: (context, constraints) => constraints.maxWidth >= 800
+                  ? Row(
+                      children: [
+                        Expanded(child: _buildChat(context)),
+                        Expanded(child: XrayView(reply: _agent.lastRawReply)),
+                      ],
+                    )
+                  : XrayView(reply: _agent.lastRawReply),
             ),
-          if (_showXray)
-            Container(
-              height: 200,
-              width: double.infinity,
-              color: Colors.black87,
-              padding: const EdgeInsets.all(8),
-              child: SingleChildScrollView(
-                child: SelectableText(
-                  _agent.lastRawReply.isEmpty ? 'No reply yet.' : _agent.lastRawReply,
-                  style: const TextStyle(fontFamily: 'monospace', fontSize: 11, color: Colors.greenAccent),
+    );
+  }
+
+  // The chat: the surfaces, the agent's reply and the prompt box.
+  Widget _buildChat(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Column(
+      children: [
+        // 1. The surfaces: newest at the bottom, like a chat.
+        Expanded(
+          child: _surfaces.isEmpty
+              ? const Center(child: Text('Nothing here yet. Ask for something!'))
+              : ListView(
+                  reverse: true,
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    for (final surface in _surfaces.reversed)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: A2uiSurface(key: ObjectKey(surface), surface: surface),
+                      ),
+                  ],
                 ),
-              ),
-            ),
-          // 3. The prompt box.
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Row(
-                children: [
-                  IconButton(onPressed: _isLoading ? null : _sendPhoto, icon: const Icon(Icons.photo_camera)),
-                  Expanded(
-                    child: TextField(
-                      controller: _promptController,
-                      decoration: const InputDecoration(hintText: 'Ask for something...', border: OutlineInputBorder()),
-                      onSubmitted: (_) => _sendPrompt(),
-                    ),
+        ),
+        // 2. The agent's text reply, and a progress bar while it works.
+        if (_isLoading) const LinearProgressIndicator(),
+        if (_reply.isNotEmpty)
+          Container(
+            width: double.infinity,
+            color: colors.secondaryContainer,
+            padding: const EdgeInsets.all(12),
+            child: Text(_reply),
+          ),
+        // 3. The prompt box.
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              children: [
+                IconButton(onPressed: _isLoading ? null : _sendPhoto, icon: const Icon(Icons.photo_camera)),
+                Expanded(
+                  child: TextField(
+                    controller: _promptController,
+                    decoration: const InputDecoration(hintText: 'Ask for something...', border: OutlineInputBorder()),
+                    onSubmitted: (_) => _sendPrompt(),
                   ),
-                  IconButton.filled(onPressed: _isLoading ? null : _sendPrompt, icon: const Icon(Icons.send)),
-                ],
-              ),
+                ),
+                IconButton.filled(onPressed: _isLoading ? null : _sendPrompt, icon: const Icon(Icons.send)),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
