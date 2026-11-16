@@ -1,0 +1,1187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workshop Talk</title>
+<style>
+:root {
+  --bg: #f7f6f3; --panel: #ffffff; --ink: #1d1b22; --muted: #6a6574; --line: #e4e1ea;
+  --accent: #6b46c1; --accent-soft: #efe9fb;
+  --say: #2f6fd6; --show: #1f8a5b; --concept: #8a5a00; --watch: #c2571a; --move: #7a6f8c;
+  --code-bg: #f1eff5;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15131a; --panel: #1e1b25; --ink: #ece9f2; --muted: #a39dad; --line: #302c3a;
+    --accent: #b39af0; --accent-soft: #2a2338;
+    --say: #7fa9f0; --show: #5cc795; --concept: #e7b65a; --watch: #f0955c; --move: #a89cbc;
+    --code-bg: #2a2633;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15131a; --panel: #1e1b25; --ink: #ece9f2; --muted: #a39dad; --line: #302c3a;
+  --accent: #b39af0; --accent-soft: #2a2338;
+  --say: #7fa9f0; --show: #5cc795; --concept: #e7b65a; --watch: #f0955c; --move: #a89cbc;
+  --code-bg: #2a2633;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+a { color: var(--accent); }
+code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-size: .9em; }
+
+/* Top bar with clock and timer */
+.bar {
+  position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 12px;
+  padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--line);
+}
+.bar h1 { font-size: 16px; margin: 0; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar .clock, .bar .timer { font-variant-numeric: tabular-nums; font-weight: 600; }
+.bar .timer { color: var(--accent); min-width: 56px; text-align: right; }
+.bar button {
+  font: inherit; font-size: 14px; padding: 4px 10px; border-radius: 6px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+}
+.bar .menu { display: none; }
+
+.layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); max-width: 1200px; margin: 0 auto; }
+nav.toc {
+  position: sticky; top: 53px; align-self: start; height: calc(100vh - 53px); overflow-y: auto;
+  padding: 20px 12px 40px 16px; border-right: 1px solid var(--line); font-size: 14px;
+}
+nav.toc a {
+  display: flex; align-items: center; gap: 8px; padding: 4px 8px; border-radius: 6px;
+  color: var(--ink); text-decoration: none;
+}
+nav.toc a:hover { background: var(--accent-soft); }
+nav.toc a.h2 { font-weight: 700; margin-top: 10px; }
+nav.toc a.h3 { padding-left: 18px; color: var(--muted); }
+nav.toc a.active { background: var(--accent-soft); color: var(--accent); }
+nav.toc a.done { text-decoration: line-through; opacity: .55; }
+nav.toc .progress { color: var(--muted); font-size: 13px; padding: 0 8px 8px; }
+
+main { padding: 24px 32px 80px; min-width: 0; }
+main > section, main > p, main > table, main > ul { max-width: 780px; }
+h1.title { font-size: 30px; margin: 4px 0 8px; }
+h2 { font-size: 24px; margin: 40px 0 12px; padding-bottom: 6px; border-bottom: 2px solid var(--accent); }
+section.level3 {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+  padding: 4px 22px 16px; margin: 18px 0;
+}
+section.level3.is-done { opacity: .6; }
+h3 { font-size: 19px; margin: 16px 0 8px; display: flex; align-items: center; gap: 10px; }
+h3 label { margin-left: auto; font-size: 13px; font-weight: 500; color: var(--muted); display: flex; gap: 6px; align-items: center; cursor: pointer; white-space: nowrap; }
+.time { font-size: 13px; font-weight: 600; color: var(--muted); background: var(--bg); border: 1px solid var(--line); padding: 1px 8px; border-radius: 99px; }
+
+p.key {
+  background: var(--accent-soft); border-left: 4px solid var(--accent);
+  padding: 10px 14px; border-radius: 6px; font-size: 17px;
+}
+p.key strong:first-child { color: var(--accent); }
+p.lbl-say strong:first-child { color: var(--say); }
+p.lbl-show strong:first-child { color: var(--show); }
+p.lbl-watch strong:first-child { color: var(--watch); }
+p.lbl-concept strong:first-child { color: var(--concept); }
+h4 { font-size: 16px; margin: 22px 0 6px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+p.lbl-move { color: var(--move); font-style: italic; border-top: 1px dashed var(--line); padding-top: 10px; }
+p.lbl-move strong:first-child { font-style: normal; }
+p.break { text-align: center; font-weight: 700; color: var(--watch); letter-spacing: .05em; }
+blockquote {
+  margin: 12px 0; padding: 10px 16px 10px 16px; border-left: 4px solid var(--say);
+  background: var(--bg); border-radius: 6px; font-size: 18px; line-height: 1.55;
+}
+blockquote::before { content: "SAY"; display: block; font-size: 11px; font-weight: 700; letter-spacing: .1em; color: var(--say); margin-bottom: 2px; }
+blockquote p { margin: 4px 0; }
+ul, ol { padding-left: 22px; }
+li { margin: 3px 0; }
+table { border-collapse: collapse; width: 100%; background: var(--panel); border-radius: 8px; overflow: hidden; }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+th { background: var(--accent-soft); }
+hr { display: none; }
+pre { background: var(--code-bg); padding: 12px 14px; border-radius: 8px; overflow-x: auto; max-width: 100%; }
+pre code { background: none; padding: 0; }
+@media (max-width: 860px) { table { display: block; overflow-x: auto; } }
+
+@media (max-width: 860px) {
+  .layout { grid-template-columns: 1fr; }
+  .bar .menu { display: inline-block; }
+  .bar .clock { display: none; }
+  nav.toc {
+    display: none; position: fixed; top: 53px; left: 0; right: 0; bottom: 0; height: auto;
+    background: var(--bg); z-index: 9; border: 0;
+  }
+  body.toc-open nav.toc { display: block; }
+  main { padding: 16px 16px 60px; }
+  section.level3 { padding: 4px 14px 12px; }
+  h3 { flex-wrap: wrap; }
+}
+@media print {
+  .bar, nav.toc, h3 label { display: none !important; }
+  .layout { display: block; }
+  body { background: #fff; color: #000; }
+  section.level3 { break-inside: avoid; border-color: #ccc; }
+}
+</style>
+</head>
+<body>
+<div class="bar">
+  <button class="menu" id="menu" aria-label="Show sections">☰</button>
+  <h1>Dream It, Render It: The Talk</h1>
+  <span class="clock" id="clock" title="Current time"></span>
+  <span class="timer" id="timer" title="Time since you pressed Start">0:00</span>
+  <button id="timerBtn">Start</button>
+  <button id="themeBtn" aria-label="Switch light or dark">Theme</button>
+</div>
+<div class="layout">
+  <nav class="toc" id="toc"></nav>
+  <main id="main">
+<section id="the-workshop-talk-dream-it-render-it" class="level1">
+<h1>The Workshop Talk: Dream It, Render It</h1>
+<p>The full talk for the workshop, written for people who are new to
+coding. You can read it word for word or put it in your own words.</p>
+<p><strong>How to read this page</strong></p>
+<ul>
+<li>Text in a quote block is <strong>what you say</strong>.</li>
+<li><strong>Do:</strong> is what you do on screen.</li>
+<li><strong>In plain words:</strong> explains one idea simply, often
+with an everyday comparison.</li>
+<li><strong>Check the room:</strong> is a question to make sure nobody
+is lost.</li>
+<li><strong>If someone is stuck:</strong> lists the usual problems and
+fixes.</li>
+<li><strong>Move on:</strong> is the line that leads into the next
+part.</li>
+</ul>
+<p>Students follow the step pages and copy the code from them. You don't
+need to read code aloud. Your job is to explain <strong>why</strong>,
+show it working once, and keep everyone together.</p>
+<p><strong>Timing:</strong> about 3.5 hours with a break. If time runs
+short, shorten Step 6 and skip the side quests.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Part</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Opening</td>
+<td>20 min</td>
+</tr>
+<tr class="even">
+<td>Step 0 and Step 1: idea and set-up</td>
+<td>30 min</td>
+</tr>
+<tr class="odd">
+<td>Step 2: a card by hand</td>
+<td>25 min</td>
+</tr>
+<tr class="even">
+<td>Break</td>
+<td>10 min</td>
+</tr>
+<tr class="odd">
+<td>Step 3 and Step 4: the AI takes over</td>
+<td>40 min</td>
+</tr>
+<tr class="even">
+<td>Step 5 and Step 6: reliable and fast</td>
+<td>35 min</td>
+</tr>
+<tr class="odd">
+<td>Step 7: make it yours</td>
+<td>25 min</td>
+</tr>
+<tr class="even">
+<td>Show and tell, and closing</td>
+<td>25 min</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<section id="before-you-start" class="level2">
+<h2>Before You Start</h2>
+<section id="get-ready" class="level3">
+<h3>Get Ready</h3>
+<ul>
+<li>Have the finished Fridge Chef (<code>checkpoints/step_06</code>)
+running in Chrome, with the X-ray view ready.</li>
+<li>Test your Gemini key on the venue Wi-Fi.</li>
+<li>Keep a photo of a fridge on your laptop for the demo.</li>
+<li>Write the repository link where everyone can see it.</li>
+<li>Open <a href="TROUBLESHOOTING.md">Troubleshooting</a> in a tab. Most
+early problems are entries 1 to 3.</li>
+</ul>
+<hr />
+</section>
+</section>
+<section id="opening" class="level2">
+<h2>Opening</h2>
+<section id="welcome-2-min" class="level3">
+<h3>Welcome (2 min)</h3>
+<blockquote>
+<p>Welcome! Today you're going to build an app with AI inside it. You
+don't need to be a programmer. You'll copy code from the guide, and I'll
+explain what every piece does in plain words. By the end, you'll have an
+app that's yours, and you'll understand how it works.</p>
+</blockquote>
+<blockquote>
+<p>If you get lost at any point, that's normal. Raise your hand, or copy
+the "checkpoint" for that step. We'll show you how. Nobody gets left
+behind.</p>
+</blockquote>
+</section>
+<section id="the-problem-a-wall-of-text-3-min" class="level3">
+<h3>The Problem: a Wall of Text (3 min)</h3>
+<p><strong>Do:</strong> open any AI chat and ask <em>"What can I cook
+with eggs, spinach and feta?"</em></p>
+<blockquote>
+<p>Here's what AI chat usually looks like. I asked for a recipe, and I
+got a wall of text. It's correct, but look at it. The amounts are for
+two people. If I'm cooking for four, I have to ask again and read
+everything again. There's nothing to tap and nothing to tick.</p>
+</blockquote>
+<blockquote>
+<p>Now look at the apps on your phone. They don't answer with
+paragraphs. They have buttons, sliders, checklists and cards. So why
+does AI still talk to us like a letter?</p>
+</blockquote>
+</section>
+<section id="the-idea-the-ai-answers-with-an-app-5-min" class="level3">
+<h3>The Idea: the AI Answers with an App (5 min)</h3>
+<p><strong>Do:</strong> in Fridge Chef, ask the same question. A recipe
+card appears with a servings slider and a <strong>Cook this</strong>
+button. Move the slider. Press the button. The card turns into steps
+with timers.</p>
+<blockquote>
+<p>Same question, same AI. But this time, the answer is a little piece
+of an app. There's a slider for the servings. There's a button. When I
+press it, the card turns into step-by-step instructions, with
+timers.</p>
+</blockquote>
+<blockquote>
+<p>Nobody designed this card in advance. The AI decided what this answer
+needed, and the app drew it. That's called <strong>generative
+UI</strong>. "UI" means user interface: everything you see and touch on
+a screen.</p>
+</blockquote>
+<blockquote>
+<p>Today you'll build this app, step by step. Then you'll turn it into
+your own idea.</p>
+</blockquote>
+</section>
+<section id="what-is-a2ui-5-min" class="level3">
+<h3>What Is A2UI? (5 min)</h3>
+<blockquote>
+<p>To make this work, the AI and the app need a shared language. That
+language is called <strong>A2UI</strong>, short for "Agent to UI". It's
+free and open, so anyone can use it.</p>
+</blockquote>
+<p><strong>In plain words:</strong> A2UI is like <strong>ordering from a
+menu at a restaurant</strong>.</p>
+<ul>
+<li>The AI is the <strong>customer</strong>. It reads the menu and
+orders: "one card, with a heading, a slider and a button."</li>
+<li>The app is the <strong>kitchen</strong>. It only cooks what's on its
+menu, and it cooks it its own way.</li>
+<li>The <strong>menu</strong> is called the <strong>catalog</strong>.
+You decide what's on it.</li>
+</ul>
+<blockquote>
+<p>The AI never goes into the kitchen. It can't cook anything itself. It
+can only order from your menu. That's why this is safe: the AI never
+sends code that runs on your phone, only an order.</p>
+</blockquote>
+<p><strong>Do:</strong> show the diagram from the README.</p>
+<pre><code> Gemini ── &quot;draw this card&quot; ──▶ your app ──▶ the screen
+ Gemini ◀── &quot;user pressed Cook&quot; ── your app ◀── the user&#39;s tap</code></pre>
+<blockquote>
+<p>It's a loop. The AI describes the screen, your app draws it, the user
+taps something, and the tap goes back to the AI. The AI then changes the
+screen. That loop is the whole workshop.</p>
+</blockquote>
+</section>
+<section id="how-is-this-different-from-regular-app-development-3-min"
+class="level3">
+<h3>How Is This Different from Regular App Development? (3 min)</h3>
+<blockquote>
+<p>In a normal app, a developer designs every screen ahead of time. If
+the app needs a new screen, someone has to build it, test it and release
+an update.</p>
+</blockquote>
+<blockquote>
+<p>In an A2UI app, you build the <strong>pieces</strong>, like the
+building blocks of a Lego set. The AI decides how to put them together
+for each person and each question, while the app is running.</p>
+</blockquote>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>Regular app</th>
+<th>A2UI app</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Who decides the screen?</td>
+<td>The developer, in advance</td>
+<td>The AI, for each answer</td>
+</tr>
+<tr class="even">
+<td>A new kind of answer needs...</td>
+<td>A new screen and an app update</td>
+<td>Usually nothing: the AI combines the pieces you have</td>
+</tr>
+<tr class="odd">
+<td>What the developer builds</td>
+<td>Every screen</td>
+<td>The pieces (the catalog) and the rules</td>
+</tr>
+<tr class="even">
+<td>How it looks</td>
+<td>Your design</td>
+<td>Still your design: the AI uses your pieces</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="why-its-worth-it-2-min" class="level3">
+<h3>Why It's Worth It (2 min)</h3>
+<blockquote>
+<p>The people who made A2UI promise three things, and we'll test each
+one today.</p>
+</blockquote>
+<ul>
+<li><strong>Delightful:</strong> the answer takes the shape it needs. A
+list one time, a form the next, a timer after that.</li>
+<li><strong>Reliable:</strong> the AI can only use the pieces you allow.
+Anything else is rejected before it reaches the screen.</li>
+<li><strong>Fast:</strong> the screen builds itself while the AI is
+still writing, and a short way of writing it makes replies quicker.</li>
+</ul>
+<blockquote>
+<p>And one more benefit for you: it's a quick way to build something
+useful. Change a few lines of text, and you have a different app.</p>
+</blockquote>
+</section>
+<section id="todays-plan-1-min" class="level3">
+<h3>Today's Plan (1 min)</h3>
+<blockquote>
+<p>Here's how today goes. First, set-up: we create the app and connect
+it to the AI. Then we write one card by hand, so you learn the language.
+Then the AI takes over the writing. Then we make it reliable and fast.
+And at the end, you turn it into your own app.</p>
+</blockquote>
+<blockquote>
+<p>Every step ends with an app that works. If you fall behind, each step
+has a <strong>checkpoint</strong>: a copy of the finished code you can
+paste over yours.</p>
+</blockquote>
+<hr />
+</section>
+</section>
+<section id="part-1-set-up" class="level2">
+<h2>Part 1: Set Up</h2>
+<section id="step-0-pick-your-idea-5-min" class="level3">
+<h3>Step 0: Pick Your Idea (5 min)</h3>
+<blockquote>
+<p>Before any code, think about what your app could be. Write one
+sentence: "My app is a ___ that ___." For example: "My app is a plant
+doctor that tells me what's wrong with my plant."</p>
+</blockquote>
+<blockquote>
+<p>We'll all build the same example first: <strong>Fridge Chef</strong>.
+You tell it, or show it, what's in your fridge, and Chef Pip suggests a
+dish. Building the same app means you can always compare your work with
+the guide. In Step 7, you swap in your own idea.</p>
+</blockquote>
+<blockquote>
+<p>A good idea is one where the answer is <strong>more than
+words</strong>: something to tap, tick, slide or press. Look at the
+table on the page for ideas. Mixing two is often the most fun: a quiz
+show hosted by a pirate?</p>
+</blockquote>
+<p><strong>Check the room:</strong> ask two or three people to read
+their sentence out loud.</p>
+<p><strong>Move on:</strong> "Keep your sentence somewhere. Now let's
+build."</p>
+</section>
+<section id="step-1-set-up-your-app-25-min" class="level3">
+<h3>Step 1: Set Up Your App (25 min)</h3>
+<p><strong>Key message:</strong> an app with a text box that chats with
+the AI, in plain text for now.</p>
+<section id="part-a-the-api-key" class="level4">
+<h4>Part A: The API Key</h4>
+<blockquote>
+<p>First, our app needs permission to talk to Gemini, Google's AI. That
+permission is an <strong>API key</strong>.</p>
+</blockquote>
+<p><strong>In plain words:</strong> an <strong>API key</strong> is like
+a <strong>library card</strong>. It proves who you are, and it's linked
+to your free allowance of AI requests. Anyone with your card can use
+your allowance, so keep it private.</p>
+<blockquote>
+<p>Go to Google AI Studio, click Create API key, and leave that tab
+open. We'll copy the key in a minute.</p>
+</blockquote>
+</section>
+<section id="part-b-create-the-project" class="level4">
+<h4>Part B: Create the Project</h4>
+<blockquote>
+<p>Now we create the app. We're using <strong>Flutter</strong>, a free
+tool from Google for making apps for phones, computers and the web from
+one set of code.</p>
+</blockquote>
+<p><strong>In plain words:</strong></p>
+<ul>
+<li><code>flutter create</code> makes a new, empty app: like getting a
+new notebook.</li>
+<li><code>flutter pub add</code> downloads <strong>packages</strong>:
+ready-made code other people wrote, so we don't start from zero. Like
+adding apps to your phone.</li>
+<li>We add them all now, so we don't stop for installs later.</li>
+</ul>
+<blockquote>
+<p>Then paste your key into a new file called <code>api_key.dart</code>.
+The next command tells Git to ignore that file, so your key never ends
+up online by accident.</p>
+</blockquote>
+<p><strong>If someone is stuck:</strong> school or work accounts
+sometimes block AI Studio, so use a personal Google account. If
+<code>flutter pub add</code> fails, Flutter may be too old: run
+<code>flutter upgrade</code>.</p>
+</section>
+<section id="part-c-the-app-shell" class="level4">
+<h4>Part C: The App Shell</h4>
+<blockquote>
+<p>Now we write our first three files. Don't worry about every line.
+Here's what each one does.</p>
+</blockquote>
+<ul>
+<li><code>agent_service.dart</code> is the <strong>brain</strong>. It
+talks to the AI.</li>
+<li><code>home_page.dart</code> is the <strong>face</strong>. It shows
+things on screen and passes on what you type.</li>
+<li><code>main.dart</code> is the <strong>front door</strong>. It starts
+the app.</li>
+</ul>
+<blockquote>
+<p>We keep the brain and the face apart all day. That way, most later
+steps only change the brain.</p>
+</blockquote>
+<p><strong>In plain words:</strong></p>
+<ul>
+<li>A <strong>prompt</strong> is what you type to the AI.</li>
+<li>The <strong>system message</strong> is a hidden note to the AI,
+before the conversation starts, telling it how to behave. Like a
+briefing for a new employee. Ours says "You are a friendly, helpful
+assistant." Later it becomes your app's personality.</li>
+<li>The <strong>history</strong> is the conversation so far. The AI has
+no memory of its own, so we send it the whole conversation every
+time.</li>
+</ul>
+<p><strong>Do:</strong> run <code>flutter run -d chrome</code>, then ask
+<em>"What can I cook with eggs, spinach and feta?"</em></p>
+<blockquote>
+<p>We got a wall of text, just like a normal chatbot. <strong>Remember
+this question.</strong> In Step 3 you'll ask it again and see the
+difference.</p>
+</blockquote>
+<p><strong>In plain words:</strong> <strong>hot restart</strong>. While
+the app runs, pressing <code>R</code> in the terminal restarts it with
+your new code. Do this after every step. If something looks strange,
+restart first.</p>
+<p><strong>Check the room:</strong> "Hands up if Gemini answered you."
+<strong>Don't move on until everyone's app answers.</strong> If it works
+now, it'll work all day.</p>
+<p><strong>If someone is stuck:</strong> "Paste your Gemini API key" on
+screen means the key wasn't saved, or the app needs a full restart. "API
+key not valid" means the key was copied wrong: copy it again. See
+Troubleshooting 1 and 2.</p>
+<p><strong>Move on:</strong> "The AI can talk. Before it builds screens,
+let's learn the language it builds them in, by writing one
+ourselves."</p>
+<hr />
+</section>
+</section>
+</section>
+<section id="part-2-speak-a2ui" class="level2">
+<h2>Part 2: Speak A2UI</h2>
+<section id="step-2-a-recipe-card-by-hand-25-min" class="level3">
+<h3>Step 2: A Recipe Card, by Hand (25 min)</h3>
+<p><strong>Key message:</strong> a screen can be described as a list of
+pieces. You write the description, and the app draws it.</p>
+<blockquote>
+<p>In this step, we play the AI. We write the order ourselves, by hand.
+Then, when the AI does it in Step 3, you'll recognize every line.</p>
+</blockquote>
+<section id="surfaces-and-components" class="level4">
+<h4>Surfaces and Components</h4>
+<p><strong>In plain words:</strong></p>
+<ul>
+<li>A <strong>surface</strong> is one card in the chat: one
+self-contained piece of screen. Each has its own name, its
+<strong>id</strong>.</li>
+<li>A <strong>component</strong> is one piece inside it: a text, a
+slider, a button. These are the dishes on the menu.</li>
+<li>We describe all of this in <strong>JSON</strong>: a simple way to
+write data with labels, like a filled-in form.
+<code>"name": "omelette"</code> means "the name is omelette".</li>
+</ul>
+<blockquote>
+<p>We build a card with three <strong>messages</strong>, like three
+instructions:</p>
+<ol type="1">
+<li><strong>"Create a new card."</strong> That's
+<code>createSurface</code>.</li>
+<li><strong>"Here's some information for it."</strong> That's
+<code>updateDataModel</code>.</li>
+<li><strong>"Here are its pieces."</strong> That's
+<code>updateComponents</code>.</li>
+</ol>
+</blockquote>
+<p><strong>Do:</strong> show the tree drawing on the page.</p>
+<blockquote>
+<p>The pieces come as a <strong>flat list</strong>, not nested inside
+each other. The piece called <code>root</code> is the top. Every piece
+says which pieces are inside it, by name. It's like a seating plan: "the
+Card holds the Column, the Column holds the title, the slider and the
+button".</p>
+</blockquote>
+<blockquote>
+<p>Why a flat list? Because it's easy for an AI to write one piece at a
+time, and to change just one piece later. You'll see that pay off.</p>
+</blockquote>
+</section>
+<section id="data-and-bindings" class="level4">
+<h4>Data and Bindings</h4>
+<p><strong>In plain words:</strong> the <strong>data model</strong> is
+the card's <strong>notepad</strong>. It's where the card keeps its
+information: the dish's name, the number of servings.</p>
+<blockquote>
+<p>A <strong>binding</strong> connects a piece to a line on the notepad.
+The slider is bound to "servings". When you move the slider, it writes
+the new number on the notepad. The text underneath reads from the same
+line, so it changes too.</p>
+</blockquote>
+<blockquote>
+<p>The slider and the text don't know about each other. They just share
+the notepad.</p>
+</blockquote>
+</section>
+<section id="actions" class="level4">
+<h4>Actions</h4>
+<p><strong>In plain words:</strong> an <strong>action</strong> is a
+<strong>doorbell</strong>. Pressing the button doesn't run any code by
+itself. It rings the bell and says "someone pressed Cook, with these
+values." Whoever is listening decides what happens.</p>
+<blockquote>
+<p>Right now, our app just shows a little message at the bottom when the
+bell rings. In Step 4, the bell will ring at the AI's door.</p>
+</blockquote>
+<p><strong>Do:</strong> restart. Send anything. The card appears. Type a
+dish name and move the slider: the text follows. Press <strong>Cook
+this</strong>: the message shows the values.</p>
+<blockquote>
+<p>Notice: we didn't design a single button. We
+<strong>described</strong> a card, and the A2UI package drew it with
+real Flutter parts.</p>
+</blockquote>
+<p><strong>Check the room:</strong> "Move your slider. Does the text
+below it change? Press Cook. Do you see the message?"</p>
+<p><strong>Try this together:</strong> rename <code>root</code> to
+something else, restart, and see what happens. Then put it back.
+Breaking things on purpose is a great way to learn.</p>
+<p><strong>Move on:</strong> "You can now write everything the AI will
+write. Let's take a break, and then hand the AI the pen."</p>
+<hr />
+</section>
+</section>
+</section>
+<section id="break-10-min" class="level2">
+<h2>Break (10 min)</h2>
+<hr />
+</section>
+<section id="part-3-hand-the-ai-the-pen" class="level2">
+<h2>Part 3: Hand the AI the Pen</h2>
+<section id="step-3-gemini-writes-the-ui-20-min" class="level3">
+<h3>Step 3: Gemini Writes the UI (20 min)</h3>
+<p><strong>Key message:</strong> the AI now writes the same messages you
+wrote by hand, and a personality tells it what to build.</p>
+<blockquote>
+<p>In Step 2, we wrote the card ourselves. Now we delete that and let
+Gemini write it. But how does Gemini know the A2UI language?</p>
+</blockquote>
+<p><strong>In plain words:</strong> the A2UI package gives Gemini two
+things.</p>
+<ol type="1">
+<li><strong>A rulebook.</strong> Before the chat starts, it adds the
+A2UI rules and the whole menu (the catalog) to the system message. Now
+Gemini knows the language and what it's allowed to order.</li>
+<li><strong>An inspector.</strong> When Gemini replies, the package
+checks every order against the menu before anything reaches the screen.
+Anything not on the menu is rejected.</li>
+</ol>
+<section id="the-persona" class="level4">
+<h4>The Persona</h4>
+<blockquote>
+<p>We also give the AI a <strong>persona</strong>: a character and a job
+description.</p>
+</blockquote>
+<p><strong>In plain words:</strong> the <strong>persona</strong> is a
+<strong>design brief</strong>, like what you'd give a designer. Ours
+says: you're Chef Pip, a cheerful chef who hates wasting food. Always
+answer with a recipe card. The card has a heading, a line about why the
+dish works, the ingredients, a servings slider and a Cook button.</p>
+<blockquote>
+<p>Because the brief is so specific, every card looks the same, even
+though nobody designed it in advance. The more specific you are, the
+more consistent your app looks.</p>
+</blockquote>
+</section>
+<section id="the-x-ray-view" class="level4">
+<h4>The X-ray View</h4>
+<blockquote>
+<p>We also add an <strong>X-ray</strong> button. It shows exactly what
+Gemini wrote behind the scenes. Keep it open all day. It's the best way
+to understand what's going on.</p>
+</blockquote>
+<p><strong>Do:</strong> restart, and ask the question from Step 1 again.
+A recipe card appears. Open the X-ray side by side.</p>
+<blockquote>
+<p>Same question, same AI, as in Step 1. But this time we got a card
+with a slider and a button, instead of a wall of text.</p>
+</blockquote>
+<blockquote>
+<p>Look at the X-ray. Do you recognize it? <code>createSurface</code>,
+<code>updateComponents</code>, a slider bound to servings. It's the same
+thing you wrote by hand. Gemini learned it from the rulebook.</p>
+</blockquote>
+<p><strong>Check the room:</strong> "Ask for something different:
+'Something sweet with bananas'. Do you get a card every time?"</p>
+<p><strong>Try this together:</strong> change one line of the persona,
+for example give Chef Pip a strong opinion about pineapple. Restart and
+ask again. The AI follows your brief.</p>
+<p><strong>Move on:</strong> "Right now, it's still a one-way street.
+Let's make the button talk back."</p>
+</section>
+</section>
+<section id="step-4-snap-and-cook-20-min" class="level3">
+<h3>Step 4: Snap and Cook (20 min)</h3>
+<p><strong>Key message:</strong> the AI can see photos, and the buttons
+on its cards now talk back to it. That turns a chat into an app.</p>
+<section id="photos" class="level4">
+<h4>Photos</h4>
+<p><strong>In plain words:</strong> Gemini is
+<strong>multimodal</strong>: it understands pictures as well as words. A
+photo can travel in the same message as a question, like a text message
+with a picture attached.</p>
+<blockquote>
+<p>Instead of typing what's in your fridge, you can just show it.</p>
+</blockquote>
+</section>
+<section id="closing-the-loop" class="level4">
+<h4>Closing the Loop</h4>
+<blockquote>
+<p>Remember the doorbell from Step 2? Until now, it only showed a little
+message. Now it rings at Gemini's door.</p>
+</blockquote>
+<blockquote>
+<p>When you press <strong>Cook this</strong>, the app sends Gemini a
+short note: "the Cook button was pressed, on this card, with 4
+servings." Gemini answers by <strong>changing the card it already
+made</strong>: it turns it into step-by-step instructions, with the
+amounts for 4 people.</p>
+</blockquote>
+<p><strong>In plain words:</strong> this is the full A2UI loop.</p>
+<ol type="1">
+<li>The AI describes a screen.</li>
+<li>You tap something.</li>
+<li>The tap goes back to the AI.</li>
+<li>The AI updates the screen.</li>
+</ol>
+<blockquote>
+<p>And notice: Gemini never had to ask "how many people are eating?" The
+slider already wrote it on the card's notepad, and the button took it
+along.</p>
+</blockquote>
+<p><strong>Do:</strong> send a photo of a fridge. Move the slider to 4.
+Press <strong>Cook this</strong>. The card changes in place. Show the
+update in the X-ray.</p>
+<p><strong>Check the room:</strong> "Press Cook with the slider on 1,
+then ask again and press it on 8. Do the amounts change?"</p>
+<p><strong>If someone is stuck:</strong> Gemini makes a new card instead
+of changing the old one: the persona must say "update the SAME surface".
+On iPhone or Mac, photos need a permission setting: Chrome is
+easiest.</p>
+<p><strong>Try this together:</strong> send a photo that isn't food,
+like your shoes. What does Chef Pip do?</p>
+<p><strong>Move on:</strong> "It works, and it's fun. But can we trust
+it? And can it be faster?"</p>
+<hr />
+</section>
+</section>
+</section>
+<section id="part-4-reliable-and-fast" class="level2">
+<h2>Part 4: Reliable and Fast</h2>
+<section id="step-5-your-own-component-20-min" class="level3">
+<h3>Step 5: Your Own Component (20 min)</h3>
+<p><strong>Key message:</strong> you can add your own piece to the menu,
+and the AI learns to use it from a short description.</p>
+<blockquote>
+<p>The basic menu has text, sliders, buttons and lists. But it has no
+cooking timer. So let's add one: a piece that only exists in our
+app.</p>
+</blockquote>
+<p><strong>In plain words:</strong> a new menu item needs three
+things.</p>
+<ol type="1">
+<li><strong>A description</strong> for the AI, called a
+<strong>schema</strong>. It says what the piece is called and what the
+AI can set: "CookingTimer: minutes, and a label." This is the only part
+the AI ever sees.</li>
+<li><strong>The recipe</strong> for the app, called a
+<strong>builder</strong>. It's the Flutter code that draws the timer:
+the ring, the countdown, the start and pause buttons.</li>
+<li><strong>Your own menu</strong>, called a <strong>catalog</strong>,
+which sits next to the basic one.</li>
+</ol>
+<blockquote>
+<p>Gemini only decides two things: how many minutes, and the label.
+Everything else, like the ticking, the buttons and the colors, is our
+code. The AI decides <strong>what</strong> to show; we decide
+<strong>how it looks and behaves</strong>.</p>
+</blockquote>
+<p><strong>Do:</strong> restart, ask for a dish, press <strong>Cook
+this</strong>. Timers appear after every step that needs waiting. Start
+one.</p>
+<section id="lets-try-to-break-it" class="level4">
+<h4>Let's Try to Break It</h4>
+<p><strong>Do:</strong> ask <em>"Show the recipe as a chess board"</em>
+or <em>"Add a video of it"</em>.</p>
+<blockquote>
+<p>There's no chess board or video on our menu. So Gemini either makes
+do with what it has, or it orders something that doesn't exist, and the
+app says it couldn't draw it. Either way, nothing outside our menu
+reaches the screen.</p>
+</blockquote>
+<blockquote>
+<p>That's the <strong>reliable</strong> promise. You stay in control of
+what can appear in your app.</p>
+</blockquote>
+<p><strong>Try this together:</strong> change the description of
+<code>minutes</code> to "always 1". Restart. Gemini follows your
+description, even though it's silly. That shows how much the description
+matters. Put it back afterwards.</p>
+<p><strong>Move on:</strong> "It's reliable. Now let's make it
+fast."</p>
+</section>
+</section>
+<section id="step-6-fast-15-min" class="level3">
+<h3>Step 6: Fast (15 min)</h3>
+<p><strong>Key message:</strong> the card builds itself while the AI is
+still writing, and a shorter way of writing makes it quicker.</p>
+<blockquote>
+<p>Right now we wait for Gemini to finish its whole answer, and then
+everything appears at once. Two changes fix that.</p>
+</blockquote>
+<p><strong>In plain words:</strong></p>
+<ul>
+<li><strong>Streaming:</strong> instead of waiting for the whole answer,
+we show each piece as it arrives. Like watching someone type, instead of
+waiting for the full letter. This is why the flat list from Step 2
+matters: each piece can be drawn as soon as it's complete.</li>
+<li><strong>A2UI Express:</strong> a shorter way for the AI to write the
+same card. Like writing in shorthand. The package translates it back, so
+the rest of the app doesn't change at all.</li>
+</ul>
+<blockquote>
+<p>Fewer words to write means a faster answer, and a cheaper one: AI
+services charge by how much the AI reads and writes.</p>
+</blockquote>
+<p><strong>Do:</strong> after the streaming change, ask for a dish and
+watch the card grow. Note the numbers at the top of the X-ray, like
+"2154 characters in 6.3 s". Then switch to Express, restart, ask again,
+and compare.</p>
+<blockquote>
+<p>Same card, far fewer characters. The rulebook gets smaller too: about
+25,000 characters instead of 45,000, and the AI reads it on every
+turn.</p>
+</blockquote>
+<p><strong>Try this together:</strong> the first piece written appears
+first. Move the heading to the end of the persona's list, and watch the
+card build in a different order.</p>
+<p><strong>Move on:</strong> "You now have a complete A2UI app. Time to
+make it yours."</p>
+<hr />
+</section>
+</section>
+<section id="part-5-make-it-yours" class="level2">
+<h2>Part 5: Make It Yours</h2>
+<section id="step-7-make-it-yours-25-min" class="level3">
+<h3>Step 7: Make It Yours (25 min)</h3>
+<p><strong>Key message:</strong> change three things, the look, the
+persona and the component, and you have a brand-new app.</p>
+<blockquote>
+<p>Everything an A2UI app needs is already working: the loop, the
+photos, the menu, the streaming. What makes Fridge Chef <em>Fridge
+Chef</em> is only three things.</p>
+</blockquote>
+<ol type="1">
+<li><strong>The look:</strong> the name and the colors.</li>
+<li><strong>The persona:</strong> the character and the design
+brief.</li>
+<li><strong>The component:</strong> your one special piece.</li>
+</ol>
+<blockquote>
+<p>Swap those, and it's a different app. Get out your sentence from Step
+0.</p>
+</blockquote>
+<p><strong>Do:</strong> walk through the persona template on the page.
+Fill in the blanks for a quick example idea, live.</p>
+<p><strong>Tips to share:</strong></p>
+<ul>
+<li><strong>Describe the card as a list</strong>, piece by piece. Vague
+briefs give random screens.</li>
+<li><strong>Keep the two lines about button presses.</strong> They make
+the loop work.</li>
+<li><strong>Change what a photo means</strong>: in an outfit judge, the
+photo is the outfit.</li>
+<li><strong>Your component:</strong> start from the timer and change it.
+A health bar, a mood meter, a dice face, a star rating.</li>
+<li><strong>Write good descriptions.</strong> The AI only knows what
+your description tells it.</li>
+</ul>
+<blockquote>
+<p>When the AI doesn't do what you meant, the fix is almost always in
+the persona. Keep the X-ray open, and read the table on the page.</p>
+</blockquote>
+<p><strong>Do:</strong> walk around the room. Read personas. Help people
+make them more specific.</p>
+<blockquote>
+<p>Notice what you changed: a few lines of text and one piece.
+Everything else stayed the same. That's the point of A2UI: the AI
+decides what to show, and your app decides how it looks.</p>
+</blockquote>
+<hr />
+</section>
+</section>
+<section id="side-quests" class="level2">
+<h2>Side Quests</h2>
+<p>For people who finish early. They don't depend on each other, so pick
+any.</p>
+<section id="side-quest-a-kitchen-tools" class="level3">
+<h3>Side Quest A: Kitchen Tools</h3>
+<blockquote>
+<p>Ask an AI what's in your cupboard and it'll guess. Ask it to keep a
+shopping list and it'll forget it. <strong>Function calling</strong>
+fixes that.</p>
+</blockquote>
+<p><strong>In plain words:</strong> you give the AI
+<strong>tools</strong>: little functions in your code it can call when
+it needs a real answer. Like a chef who can't see your cupboard, so they
+<strong>ask you</strong> to check, and must use your answer.</p>
+<ul>
+<li><code>checkPantry</code> tells Gemini the basics you always
+have.</li>
+<li><code>addToShoppingList</code> adds to a list that your app keeps,
+so it never forgets.</li>
+</ul>
+<blockquote>
+<p>The truth lives in your code. The AI builds the screen around it. Use
+this for anything that must be right: scores, dates, prices, a dice
+roll.</p>
+</blockquote>
+</section>
+<section id="side-quest-b-ai-painted-dishes" class="level3">
+<h3>Side Quest B: AI-Painted Dishes</h3>
+<blockquote>
+<p>A piece on your menu can do anything, even ask
+<strong>another</strong> AI for help. The <code>Illustration</code>
+piece takes a description that Gemini writes, and an image AI paints
+it.</p>
+</blockquote>
+<blockquote>
+<p>Pictures use your free allowance faster, so if one doesn't appear,
+wait a minute.</p>
+</blockquote>
+</section>
+<section id="side-quest-c-a-3d-chef-companion" class="level3">
+<h3>Side Quest C: A 3D Chef Companion</h3>
+<blockquote>
+<p>Give your AI a body: a little 3D creature made of spheres that sits
+at the top of the screen. Gemini sets its <strong>mood</strong>, and the
+creature acts it out: bouncing when it's happy, drooping when it's
+sad.</p>
+</blockquote>
+<blockquote>
+<p>It's just another piece on the menu. Same idea as the timer, with a
+3D engine called Flutter Scene doing the drawing.</p>
+</blockquote>
+<hr />
+</section>
+</section>
+<section id="making-it-useful" class="level2">
+<h2>Making It Useful</h2>
+<section id="where-this-is-useful-in-real-life-5-min" class="level3">
+<h3>Where This Is Useful in Real Life (5 min)</h3>
+<blockquote>
+<p>You built a fun app today. But this same idea is useful in many real
+products. Anywhere the right screen depends on the person and the
+question.</p>
+</blockquote>
+<ul>
+<li><strong>Customer support:</strong> instead of a long reply, show a
+form to fill in, or a button to rebook.</li>
+<li><strong>Shopping:</strong> compare products in a table, with buttons
+to pick one.</li>
+<li><strong>Learning:</strong> a quiz card for any topic, with a
+score.</li>
+<li><strong>Health and fitness:</strong> a workout plan with sets to
+tick off, or a medicine schedule with reminders.</li>
+<li><strong>Travel:</strong> a day plan as a timeline, with a map.</li>
+<li><strong>Work tools:</strong> ask "show me this week's sales" and get
+a chart, not a paragraph.</li>
+<li><strong>Accessibility:</strong> the same answer, in bigger pieces or
+simpler layouts for people who need them.</li>
+</ul>
+</section>
+<section id="how-to-grow-it-from-here-5-min" class="level3">
+<h3>How to Grow It from Here (5 min)</h3>
+<blockquote>
+<p>If you want to keep going after today, here's the path.</p>
+</blockquote>
+<ol type="1">
+<li><strong>Add more pieces to your menu.</strong> Each new component
+makes your app able to show more. That's where most of the value
+is.</li>
+<li><strong>Connect real information with tools</strong> (Side Quest A).
+Weather, your calendar, a product list, a database. The AI is only as
+good as the facts you give it.</li>
+<li><strong>Remember things between visits.</strong> Save the shopping
+list, the score, the user's favorites.</li>
+<li><strong>Make pieces interactive.</strong> Let your component ring
+its own doorbell: a rating that sends the stars back to the AI.</li>
+<li><strong>Read the A2UI docs</strong> at a2ui.org. The links are at
+the bottom of the README.</li>
+</ol>
+</section>
+<section id="before-you-share-your-app-3-min" class="level3">
+<h3>Before You Share Your App (3 min)</h3>
+<blockquote>
+<p>Two important things before you publish anything.</p>
+</blockquote>
+<ul>
+<li><strong>Your key is inside your app.</strong> That's fine today, on
+your own computer. But if you publish the app, someone could dig the key
+out and use your allowance. For a real app, the AI calls should go
+through your own server, or through a service like Firebase AI
+Logic.</li>
+<li><strong>Only trust AIs you control.</strong> A2UI can draw anything
+on the menu. A bad AI could draw something that looks like a real login
+screen to trick people. Today the AI is yours, so it's fine. Be careful
+before you draw screens from someone else's AI.</li>
+</ul>
+<blockquote>
+<p>And remember: the AI can still be wrong. It might get an amount wrong
+or misread a photo. The menu keeps the screen safe, and tools keep the
+important facts right, but always test your app with real people.</p>
+</blockquote>
+<hr />
+</section>
+</section>
+<section id="closing" class="level2">
+<h2>Closing</h2>
+<section id="show-and-tell-15-min" class="level3">
+<h3>Show and Tell (15 min)</h3>
+<blockquote>
+<p>Who wants to show their app? Tell us your sentence from Step 0, and
+show us your special piece.</p>
+</blockquote>
+<p><strong>Do:</strong> invite three or four people to the projector.
+Point out how different the apps are, from the same steps.</p>
+</section>
+<section id="wrap-up-5-min" class="level3">
+<h3>Wrap-up (5 min)</h3>
+<blockquote>
+<p>Let's recap the whole day in one breath. The AI describes a screen.
+Your app draws it with pieces from your menu. The user taps. The tap
+goes back to the AI. The AI updates the screen. And your code makes the
+rules that matter.</p>
+</blockquote>
+<blockquote>
+<p>You started with a chatbot that answered with a wall of text. You're
+leaving with an app that answers with the right screen for every
+question. And you only had to change a few lines of text to make it
+yours.</p>
+</blockquote>
+<blockquote>
+<p>One last thing: delete your API key when you're done, or keep it
+private. Thank you, and go build something nobody has seen before!</p>
+</blockquote>
+<hr />
+</section>
+</section>
+<section id="questions-you-might-get" class="level2">
+<h2>Questions You Might Get</h2>
+<p><strong>"Is the AI writing code?"</strong></p>
+<blockquote>
+<p>No. It only writes a description, like an order from a menu. Your app
+does all the drawing, with code you wrote.</p>
+</blockquote>
+<p><strong>"Why not just use ChatGPT or Gemini directly?"</strong></p>
+<blockquote>
+<p>Those answer with text. Here, the answer is a working piece of an
+app, with sliders and buttons, in your design.</p>
+</blockquote>
+<p><strong>"Do I need to know how to code to do this?"</strong></p>
+<blockquote>
+<p>Not for today. To build your own pieces from scratch you'll learn
+some Flutter, but you can get very far by changing the persona and
+adjusting the examples.</p>
+</blockquote>
+<p><strong>"Does this cost money?"</strong></p>
+<blockquote>
+<p>The Gemini key has a free allowance, which is plenty for today. A
+real app with many users would pay per use.</p>
+</blockquote>
+<p><strong>"What if the AI makes a mistake?"</strong></p>
+<blockquote>
+<p>It can. If it orders something that isn't on the menu, it's rejected
+before reaching the screen. For facts that must be right, use tools
+(Side Quest A), so your code decides.</p>
+</blockquote>
+<p><strong>"Does it work on phones?"</strong></p>
+<blockquote>
+<p>Yes. Flutter apps run on Android, iPhone, the web and computers. We
+used Chrome today because it needs no extra set-up.</p>
+</blockquote>
+<p><strong>"Can I use another AI instead of Gemini?"</strong></p>
+<blockquote>
+<p>Yes. A2UI is an open standard, and the package we use for talking to
+Gemini supports other AI providers too.</p>
+</blockquote>
+</section>
+</section>
+
+  </main>
+</div>
+<script>
+(function () {
+  var store = {
+    get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  };
+  var main = document.getElementById('main');
+
+  // The document title comes in as the first h1.
+  var h1 = main.querySelector('h1');
+  if (h1) h1.className = 'title';
+
+  // Label paragraphs by what they start with.
+  var labels = { 'Key message:': 'key', 'Say:': 'lbl-say', 'Show:': 'lbl-show', 'Show: ': 'lbl-show',
+    'Watch for:': 'lbl-watch', 'Move on:': 'lbl-move', 'Ask the room:': 'lbl-show', 'Then ask the room:': 'lbl-show',
+    'Do:': 'lbl-show', 'Check the room:': 'lbl-show', 'Try this together:': 'lbl-show', 'Tips to share:': 'lbl-show',
+    'If someone is stuck:': 'lbl-watch', 'In plain words:': 'lbl-concept',
+    'Break here.': 'break' };
+  main.querySelectorAll('p').forEach(function (p) {
+    var s = p.querySelector('strong');
+    if (!s || p.firstChild !== s) return;
+    var c = labels[s.textContent.trim()];
+    if (c) p.classList.add(c);
+  });
+
+  // Turn "(10 min)" in headings into a pill.
+  main.querySelectorAll('h2, h3').forEach(function (h) {
+    h.innerHTML = h.innerHTML.replace(/\s*\((\d+ min)\)/, ' <span class="time">$1</span>');
+  });
+
+  // Build the sidebar, with a "done" checkbox on every step.
+  var toc = document.getElementById('toc');
+  var prog = document.createElement('div');
+  prog.className = 'progress';
+  toc.appendChild(prog);
+  var links = [], steps = [];
+  main.querySelectorAll('section.level2, section.level3').forEach(function (sec) {
+    var h = sec.querySelector('h2, h3');
+    if (!h) return;
+    var a = document.createElement('a');
+    a.href = '#' + sec.id;
+    a.className = h.tagName.toLowerCase();
+    a.textContent = h.textContent.replace(/\d+ min$/, '').trim();
+    toc.appendChild(a);
+    links.push({ a: a, sec: sec });
+    if (h.tagName === 'H3') {
+      var key = 'talk-done-' + sec.id;
+      var lab = document.createElement('label');
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = store.get(key) === '1';
+      lab.appendChild(cb);
+      lab.appendChild(document.createTextNode('Done'));
+      h.appendChild(lab);
+      var apply = function () {
+        sec.classList.toggle('is-done', cb.checked);
+        a.classList.toggle('done', cb.checked);
+        var n = steps.filter(function (s) { return s.checked; }).length;
+        prog.textContent = n + ' of ' + steps.length + ' sections done';
+      };
+      cb.addEventListener('change', function () { store.set(key, cb.checked ? '1' : '0'); apply(); });
+      steps.push(cb);
+      cb._apply = apply;
+    }
+  });
+  steps.forEach(function (cb) { cb._apply(); });
+
+  // Highlight where you are.
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      links.forEach(function (l) { l.a.classList.toggle('active', l.sec === e.target); });
+    });
+  }, { rootMargin: '-60px 0px -70% 0px' });
+  links.forEach(function (l) { if (l.a.className.indexOf('h3') === 0) io.observe(l.sec); });
+
+  // Mobile menu.
+  document.getElementById('menu').onclick = function () { document.body.classList.toggle('toc-open'); };
+  toc.addEventListener('click', function (e) { if (e.target.tagName === 'A') document.body.classList.remove('toc-open'); });
+
+  // Clock and session timer.
+  var clock = document.getElementById('clock'), timer = document.getElementById('timer'), btn = document.getElementById('timerBtn');
+  var start = Number(store.get('talk-timer-start')) || 0;
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function tick() {
+    var d = new Date();
+    clock.textContent = d.getHours() + ':' + pad(d.getMinutes());
+    if (start) {
+      var s = Math.floor((Date.now() - start) / 1000);
+      var h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60;
+      timer.textContent = (h ? h + ':' + pad(m) : m) + ':' + pad(s % 60);
+    } else timer.textContent = '0:00';
+    btn.textContent = start ? 'Reset' : 'Start';
+  }
+  btn.onclick = function () { start = start ? 0 : Date.now(); store.set('talk-timer-start', String(start)); tick(); };
+  tick();
+  setInterval(tick, 1000);
+
+  // Theme switch.
+  var root = document.documentElement;
+  var saved = store.get('tp-theme');
+  if (saved) root.setAttribute('data-theme', saved);
+  document.getElementById('themeBtn').onclick = function () {
+    var dark = root.getAttribute('data-theme') ? root.getAttribute('data-theme') === 'dark'
+      : matchMedia('(prefers-color-scheme: dark)').matches;
+    var next = dark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    store.set('tp-theme', next);
+  };
+})();
+</script>
+</body>
+</html>
