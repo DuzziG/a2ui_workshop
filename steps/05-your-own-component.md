@@ -1,6 +1,6 @@
 [← Step 4: Snap and Cook](04-snap-and-cook.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 6: Fast →](06-fast.md)
 
-*Part 4: Reliable and Fast · Step 5 of 6*
+*Part 4: Reliable and Fast · Step 5 of 7*
 
 # Step 5: Your Own Component
 
@@ -175,7 +175,7 @@ Fridge Chef adds a `CookingTimer`: a ring that empties as the time runs out, wit
       );
     ```
 
-    Then tell your persona about your component. Here is Fridge Chef's whole persona after this step. The only change is the last sentence, which asks for a `CookingTimer` after every step that needs waiting. Following Fridge Chef? Replace your `_persona` with this. Wrote your own? Add a sentence like it to yours: what your component is for, and when Gemini should use it.
+    Then tell your persona about your component. Here is Fridge Chef's whole persona after this step. The only change is the last sentence, which asks for a `CookingTimer` after every step that needs waiting. Replace your `_persona` with this.
 
     ```dart
       // 4. YOUR idea: who the agent is, and what its UI looks like.
@@ -204,21 +204,17 @@ Fridge Chef adds a `CookingTimer`: a ring that empties as the time runs out, wit
     ''';
     ```
 
-Run it, ask for a dish and press **Cook this**. Every step that needs waiting now comes with a timer.
+Restart the app, ask for a dish and press **Cook this**. Every step that needs waiting now comes with a timer.
 
 Now try to break it: ask for something the catalog doesn't have, like *"Show the recipe as a chess board"* or *"Add a video of it"*. Gemini either makes do with the components it has, or writes one that doesn't exist, and the app tells you it couldn't draw it. Either way, nothing outside your catalog reaches the screen.
 
 > 🧠 **What just happened:** Gemini never saw your Dart code, only your schema and its descriptions. That was enough for it to use the component and pick sensible values. This is the **reliable** promise: the AI decides *what* to show, but only from the set of things you built and allowed.
 
-> 🎨 **Make it yours:** this is the most important challenge of the workshop. Design the one widget that makes your app *yours*:
-> * a **health bar** or **mood meter** that fills and changes color
-> * a **dice** face, a **card** from a deck, a **map** with a marker
-> * a **pet** drawn from circles that looks happy or sad
-> * a **trophy**, a **progress** path, a **rating** of stars
->
-> Start from the timer: change the builder, rename the properties, and write good descriptions so Gemini knows what they mean. To level up, bind a property to the data model, or let your component emit an action: read about `props.writable` and `props.action` in the [a2ui_flutter docs](https://pub.dev/packages/a2ui_flutter#defining-custom-components).
+> 🧪 **Try this:** change the ring's colors, or the size of the time. Then change the description of `minutes` to "always 1", restart, and see Gemini follow your schema over common sense. Put it back before you go on.
 
-> **Stuck?** [`checkpoints/step_05`](../checkpoints/step_05/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays.
+> 💾 **Using Git?** `git diff` shows everything this step changed. Save it with `git add -A && git commit -m "Step 5: Your Own Component"`.
+
+> **Stuck?** [`checkpoints/step_05`](../checkpoints/step_05/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays. Cloned this repository? From your project folder, `git diff --no-index path/to/a2ui_workshop/checkpoints/step_05/lib lib` shows every line where yours differs.
 
 ---
 

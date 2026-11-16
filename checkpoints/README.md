@@ -4,7 +4,7 @@ Each folder holds the complete `lib/` folder of the app at the **end** of that s
 
 Fell behind? Copy a checkpoint's `lib/` over your own. Your `lib/api_key.dart` isn't in the checkpoints, so copying never overwrites your key.
 
-The checkpoints build the example app, Fridge Chef. Once you've caught up, put your own idea back in: your persona and your components.
+The checkpoints build the example app, Fridge Chef, through Step 6. Step 7 turns it into your own idea, so it has no checkpoint.
 
 | Folder | The app after this step |
 | ------ | ----------------------- |

@@ -116,7 +116,7 @@
     import 'companion.dart';
     ```
 
-    Then replace `myCatalog` with this version, which adds `companion` to its components:
+    Then add `companion` to the `components` list of `myCatalog`. For Fridge Chef, it looks like this:
 
     ```dart
     // 3. Your own catalog, which sits next to the basic one.
@@ -127,7 +127,7 @@
     );
     ```
 
-5.  **Tell the persona about its companion** in `lib/agent_service.dart`. The companion lives in its own surface, `companion`, and Gemini updates its mood through the data model on every answer. Here is Fridge Chef's whole persona after this side quest. The only change is the new paragraph that starts with `You have a companion`, right after the line that ends with `Never answer with text only.` Following Fridge Chef? Replace your `_persona` with this. Wrote your own? Add that paragraph to yours.
+5.  **Tell the persona about its companion** in `lib/agent_service.dart`. The companion lives in its own surface, `companion`, and Gemini updates its mood through the data model on every answer. Here is Fridge Chef's whole persona after this side quest. The only change is the new paragraph that starts with `You have a companion`, right after the line that ends with `Never answer with text only.` Following Fridge Chef? Replace your `_persona` with this. Made it your own in Step 7? Add that paragraph to yours.
 
     ```dart
       // 4. YOUR idea: who the agent is, and what its UI looks like.
@@ -177,11 +177,13 @@
                         for (final surface in _surfaces.reversed.where((s) => s.id != 'companion'))
     ```
 
-Run it, then ask for something delicious, or something awful, and watch the companion react.
+Restart the app, then ask for something delicious, or something awful, and watch the companion react.
 
 > 🎨 **Make it yours:** build *your* companion. Give it ears (`SphereGeometry`), a chef's hat (`CylinderGeometry`, `CapsuleGeometry`), a tail (`TorusGeometry`), or a body that isn't a sphere at all. Invent your own moods and how they move. Then let Gemini set more than the mood: a size, an outfit, a dance.
 
-> **Stuck?** [`checkpoints/side_quest_c`](../checkpoints/side_quest_c/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays.
+> 💾 **Using Git?** `git diff` shows everything this step changed. Save it with `git add -A && git commit -m "Side Quest C: A 3D Chef Companion"`.
+
+> **Stuck?** [`checkpoints/side_quest_c`](../checkpoints/side_quest_c/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays. Cloned this repository? From your project folder, `git diff --no-index path/to/a2ui_workshop/checkpoints/side_quest_c/lib lib` shows every line where yours differs.
 
 ---
 

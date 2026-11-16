@@ -1,6 +1,6 @@
 [← Step 3: Gemini Writes the UI](03-gemini-writes-the-ui.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 5: Your Own Component →](05-your-own-component.md)
 
-*Part 3: Hand the AI the Pen · Step 4 of 6*
+*Part 3: Hand the AI the Pen · Step 4 of 7*
 
 # Step 4: Snap and Cook
 
@@ -180,7 +180,7 @@ Two things turn the chat into an app.
             ),
     ```
 
-Run it and send a photo of a fridge (yours, or any photo you find). Set the servings, press **Cook this**, and watch the card change into the steps. Open X-ray to see the update Gemini sent.
+Restart the app and send a photo of a fridge (yours, or any photo you find). Set the servings, press **Cook this**, and watch the card change into the steps. Open X-ray to see the update Gemini sent.
 
 The message Gemini receives when you press the button looks like this:
 
@@ -191,11 +191,15 @@ The message Gemini receives when you press the button looks like this:
   "context": {"dish": "Spinach and feta omelette", "servings": 4}}}]}
 ```
 
+> 📖 **In the A2UI docs:** [actions](https://a2ui.org/concepts/actions/) explains events like `cook`, and the functions that run in the app without going to the agent.
+
 > 🧠 **What just happened:** you built the full A2UI loop. Gemini describes UI, the user acts on it, the action goes back, and Gemini updates the UI. The `servings` in the context came from the slider, through the data model: Gemini never had to ask how many people are eating. And it updated the surface it already had instead of creating a new one, because your persona told it to.
 
-> 🎨 **Make it yours:** decide what a photo *means* in your app: the next room of a dungeon, the outfit to judge, the plant to cure. Then make your button do something: a *Feed* button that changes your pet's mood, an *Answer* button that scores the quiz. Inputs you bind to the action's context (a `TextField`, a `ChoicePicker`) arrive with it.
+> 🧪 **Try this:** send a photo that isn't food at all, like your shoes. What does Chef Pip do? Then press **Cook this** with the slider on 1 and on 8, and compare the amounts.
 
-> **Stuck?** [`checkpoints/step_04`](../checkpoints/step_04/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays.
+> 💾 **Using Git?** `git diff` shows everything this step changed. Save it with `git add -A && git commit -m "Step 4: Snap and Cook"`.
+
+> **Stuck?** [`checkpoints/step_04`](../checkpoints/step_04/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays. Cloned this repository? From your project folder, `git diff --no-index path/to/a2ui_workshop/checkpoints/step_04/lib lib` shows every line where yours differs.
 
 ---
 

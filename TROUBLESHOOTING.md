@@ -49,8 +49,24 @@ Each entry gives the step, what you see, why it happens and how to fix it.
 
 **Fix:** pick a current model from the list in [AI Studio](https://aistudio.google.com/), and put its name in `chatModelName` in `agent_service.dart`.
 
+## 6. A red error screen after you change the code
+
+**Step:** any step, first seen in [3, Gemini Writes the UI](steps/03-gemini-writes-the-ui.md)
+
+**Why:** often, the app was **hot reloaded** (`r`, or saving the file) instead of restarted. A hot reload keeps the objects that already exist, such as the page's state and the `AgentService`. When a step adds fields to them, or changes how they're set up (Step 3 adds `_showXray`, `lastRawReply` and a new system message), those old objects can be left in a state the new code doesn't expect.
+
+**Fix:** **hot restart**: press `R` in the terminal where `flutter run` runs, or the restart button in your editor. After every step, restart. Still red after a restart? Read the first line of the error: it names the widget or the value that broke. Then compare your files with the step's checkpoint.
+
 ---
 
 # Found While Testing
 
-Nothing yet with the API key setup. The first test run used Firebase, and every problem it hit was in the Firebase setup, which the workshop no longer uses. Those notes are still in the Git history.
+## A red error screen at Step 3
+
+**Step:** [3, Gemini Writes the UI](steps/03-gemini-writes-the-ui.md), during the first dry run
+
+**What happened:** the app showed a red error screen after a message was sent.
+
+**Cause and fix:** see [6](#6-a-red-error-screen-after-you-change-the-code) above. **Not confirmed yet.** The likely cause is a hot reload after Step 3 added new fields, so the guide now says to restart after every step. Gemini's layouts were ruled out: dozens of likely ones (Sliders, Lists and TextFields inside Rows, Markdown texts, bad Slider values) render without a crash in the chat. If it happens again after a restart, note the first line of the error here.
+
+Before this, the first test run used Firebase, and every problem it hit was in the Firebase setup, which the workshop no longer uses. Those notes are still in the Git history.

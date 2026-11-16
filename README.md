@@ -3,13 +3,13 @@
 
 In this workshop you build an app where an AI doesn't just answer with text: it answers with **real, interactive Flutter UI**. Cards, sliders, buttons, and in the end, components you design yourself.
 
-The app is **yours**. You pick the idea in Step 0, and every step ends with a **Make it yours** challenge. By the end, no two apps in the room will look alike.
+The app is **yours**. You pick an idea in Step 0, build the example app, **Fridge Chef**, step by step, and then turn it into your idea in Step 7. By the end, no two apps in the room will look alike.
 
 ## What is A2UI?
 
 Ask a chatbot for a recipe and you get a wall of text. To cook for four instead of two, you type again and read the wall again.
 
-[A2UI](https://a2ui.org/) (Agent-to-UI) is an open protocol that lets the AI answer with the **right interface** instead: a recipe card with a servings slider and a *Cook this* button. The agent **describes** the UI as data ("a Card with a heading, a slider and a button"), and your app **draws** it with its own native Flutter widgets.
+[A2UI](https://a2ui.org/) (Agent-to-UI) is an [open protocol](https://a2ui.org/specification/v1.0-a2ui/) that lets the AI answer with the **right interface** instead: a recipe card with a servings slider and a *Cook this* button. The agent **describes** the UI as data ("a Card with a heading, a slider and a button"), and your app **draws** it with its own native Flutter widgets.
 
 ```
  ┌──────────┐   A2UI messages    ┌──────────────────┐   Flutter widgets   ┌──────────┐
@@ -30,6 +30,7 @@ A2UI makes three promises, and this workshop puts each one to the test:
 * **Part 2, Speak A2UI:** write a surface by hand, so you know exactly what the AI will write later.
 * **Part 3, Hand the AI the pen:** let Gemini write the UI, show it a photo, and send button presses back to it.
 * **Part 4, Reliable and fast:** add a component of your own, then stream the UI and switch to Express.
+* **Part 5, Make it yours:** turn Fridge Chef into your own idea: your persona, your look, your component.
 * **Side quests:** functions your code controls, AI-painted pictures, and a 3D companion built with [Flutter Scene](https://pub.dev/packages/flutter_scene).
 
 > **Something not working?** Check [Troubleshooting](TROUBLESHOOTING.md) for the problems we've already hit.
@@ -48,7 +49,7 @@ A2UI makes three promises, and this workshop puts each one to the test:
 
 ## The Steps
 
-Work through them in order. Every step ends with a working app, and a **Make it yours** challenge.
+Work through them in order, and restart the app after every step. Each one ends with a working app and a small **Try this** experiment, and in Step 7 the app becomes yours.
 
 * [Step 0: Pick Your Idea](steps/00-pick-your-idea.md)
 
@@ -70,6 +71,10 @@ Work through them in order. Every step ends with a working app, and a **Make it 
 * [Step 5: Your Own Component](steps/05-your-own-component.md)
 * [Step 6: Fast](steps/06-fast.md)
 
+**Part 5: Make It Yours**
+
+* [Step 7: Make It Yours](steps/07-make-it-yours.md)
+
 **Side Quests**
 
 * [Side Quest A: Kitchen Tools](steps/side-quest-a-kitchen-tools.md)
@@ -82,11 +87,11 @@ Work through them in order. Every step ends with a working app, and a **Make it 
 
 ## Show and Tell
 
-You now have an app that nobody else has: your idea, your persona and your own components, with an AI that builds the right UI for every answer. Show it off!
+You now have an app that nobody else has: your idea, your persona and your own component, with an AI that builds the right UI for every answer. Show it off!
 
 ## Going Further
 
-* [a2ui.org](https://a2ui.org/): the A2UI protocol, its messages and the basic catalog
+* [a2ui.org](https://a2ui.org/): the A2UI protocol, with the [v1.0 specification](https://a2ui.org/specification/v1.0-a2ui/), the [basic catalog guide](https://a2ui.org/specification/v1.0-basic-catalog-implementation-guide/) and [actions](https://a2ui.org/concepts/actions/)
 * [`a2ui_flutter`](https://pub.dev/packages/a2ui_flutter): Markdown in texts, interactive custom components, and the v0.9 protocol
 * [`a2ui_agent`](https://pub.dev/packages/a2ui_agent): more on Express, trimming a catalog, and running the agent on a Dart server
 * [The official A2UI example](https://github.com/a2ui-project/a2ui/tree/main/dart/a2ui_flutter/example): a full chat that also sends rendering errors back to the model, so it can fix its own UI

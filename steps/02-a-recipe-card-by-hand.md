@@ -1,6 +1,6 @@
 [← Step 1: Set Up Your App](01-set-up-your-app.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 3: Gemini Writes the UI →](03-gemini-writes-the-ui.md)
 
-*Part 2: Speak A2UI · Step 2 of 6*
+*Part 2: Speak A2UI · Step 2 of 7*
 
 Before an AI writes A2UI, you will write it yourself. Then, when Gemini does it, you'll recognize every line.
 
@@ -33,6 +33,8 @@ Components connect to the data model with **bindings**:
 * `{'@path': '/recipe/name'}` binds a value to a place in the data model. An input **writes** to it, a text **reads** from it.
 * `formatString` builds a text from several values, such as `'Cooking ${/recipe/name}'`.
 * A Button has an **action**. Pressing it emits an event with a name and a `context`, read from the data model.
+
+> 📖 **In the A2UI docs:** the [v1.0 specification](https://a2ui.org/specification/v1.0-a2ui/) describes every message and how data binding works, and the [basic catalog guide](https://a2ui.org/specification/v1.0-basic-catalog-implementation-guide/) lists every component you can use, with all its properties. Keep them open: you'll recognize everything in this step.
 
 1.  **Update `lib/agent_service.dart`.** `send` still asks Gemini for its answer (now in `_ask`), and then calls `_draw`, which draws the card you wrote by hand:
 
@@ -175,13 +177,15 @@ Components connect to the data model with **bindings**:
       }
     ```
 
-Run it and send anything. Gemini answers, and your card appears. Type a new dish into the form and drag the slider: the preview text follows along. Press **Cook this** and a snack bar shows the action with your values.
+Restart the app and send anything. Gemini answers, and your card appears. Type a new dish into the form and drag the slider: the preview text follows along. Press **Cook this** and a snack bar shows the action with your values.
 
 > 🧠 **What just happened:** you didn't write a single widget. You described a card, and `a2ui_flutter` turned it into a Material `Card`, `Column`, `TextField`, `Slider` and `Button`. The text field and the preview don't know about each other: they share a path in the data model, and A2UI keeps everything bound to it in sync. The button doesn't run any code of its own either: it emits an **action**. In Step 4 it goes to Gemini.
 
-> 🎨 **Make it yours:** turn this into the main card of *your* idea. A character sheet with a name and a strength slider? A quiz answer box? Change the title and the icon (try `favorite`, `home` or `shoppingCart`), and try a `CheckBox` (it binds a `true`/`false` value). Break it on purpose too: rename `root`, or point a child at an id that doesn't exist. What happens?
+> 🧪 **Try this:** change the icon (try `favorite`, `home` or `shoppingCart`), and add a `CheckBox` bound to `/recipe/vegetarian` (it binds a `true`/`false` value). Then break it on purpose: rename `root`, or point a child at an id that doesn't exist. What happens? Put it back the way it was before you go on.
 
-> **Stuck?** [`checkpoints/step_02`](../checkpoints/step_02/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays.
+> 💾 **Using Git?** `git diff` shows everything this step changed. Save it with `git add -A && git commit -m "Step 2: A Recipe Card, by Hand"`.
+
+> **Stuck?** [`checkpoints/step_02`](../checkpoints/step_02/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays. Cloned this repository? From your project folder, `git diff --no-index path/to/a2ui_workshop/checkpoints/step_02/lib lib` shows every line where yours differs.
 
 ---
 

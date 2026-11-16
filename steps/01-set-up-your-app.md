@@ -1,6 +1,6 @@
 [← Step 0: Pick Your Idea](00-pick-your-idea.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 2: A Recipe Card, by Hand →](02-a-recipe-card-by-hand.md)
 
-*Part 1: Set Up · Step 1 of 6*
+*Part 1: Set Up · Step 1 of 7*
 
 # Step 1: Set Up Your App
 
@@ -54,6 +54,14 @@ It takes about a minute.
     ```sh
     echo "lib/api_key.dart" >> .gitignore
     ```
+
+4.  **Optional: track your steps with Git.** With a commit after every step, `git diff` shows exactly what each step changed, and you can always go back. Run this once, now that your key is ignored:
+    ```sh
+    git init
+    git add -A
+    git commit -m "Step 1: Create the project"
+    ```
+    Run `git status` before every commit: `lib/api_key.dart` must never be in the list. If it is, the `.gitignore` line is missing.
 
 ### Build the app shell
 
@@ -259,15 +267,17 @@ We create the files in the order they depend on each other, so your editor never
     }
     ```
 
-Run the app with `flutter run -d chrome` (or pick another device with `flutter run`). Ask something your app is about. For Fridge Chef: *"What can I cook with eggs, spinach and feta?"*
+Run the app with `flutter run -d chrome` (or pick another device with `flutter run`). Ask it: *"What can I cook with eggs, spinach and feta?"*
+
+> **Reload or restart?** While the app runs, press `r` in the terminal for a **hot reload**, or `R` for a **hot restart**. A hot reload keeps the app's state, so it's great for small UI tweaks. But it keeps the old `AgentService` and page state too, so new fields and a changed setup may not be picked up, and the app can crash with a red error screen. Every step from here adds new code, so after each step, **restart** (`R`, or the restart button in your editor). When in doubt, restart.
 
 > **Getting `API key not valid` or another error?** Check [Troubleshooting](../TROUBLESHOOTING.md) now, before you go on. If Gemini answers here, the rest of the workshop will work too.
 
 > 🧠 **What just happened:** Gemini answered, probably with a long wall of text. Every amount is fixed for one number of people, and there's nothing to press. **Keep your question:** you'll ask it again in Step 3 and compare.
 
-> 🎨 **Make it yours:** rename the app in `main.dart`, pick a `seedColor` that fits your idea, and change the prompt box's hint text.
+> 🧪 **Try this:** ask the same question twice. Did you get the same answer? Ask it for 4 people instead of 2, and count how much you have to read again.
 
-> **Stuck?** [`checkpoints/step_01`](../checkpoints/step_01/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays.
+> **Stuck?** [`checkpoints/step_01`](../checkpoints/step_01/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays. Cloned this repository? From your project folder, `git diff --no-index path/to/a2ui_workshop/checkpoints/step_01/lib lib` shows every line where yours differs.
 
 ---
 

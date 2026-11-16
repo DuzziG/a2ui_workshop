@@ -97,7 +97,7 @@ A component's builder can do anything a widget can, including calling another AI
     import 'illustration.dart';
     ```
 
-    Then replace `myCatalog` with this version, which adds `illustration` to its components:
+    Then add `illustration` to the `components` list of `myCatalog`. For Fridge Chef, it looks like this:
 
     ```dart
     // 3. Your own catalog, which sits next to the basic one.
@@ -108,7 +108,7 @@ A component's builder can do anything a widget can, including calling another AI
     );
     ```
 
-3.  **Ask for it in the persona** in `lib/agent_service.dart`. Here is Fridge Chef's whole persona after this side quest. The only change is a new line in the list of what goes on the card, right under the heading line, asking for an `Illustration`. Following Fridge Chef? Replace your `_persona` with this. Wrote your own? Add a line like it to yours.
+3.  **Ask for it in the persona** in `lib/agent_service.dart`. Here is Fridge Chef's whole persona after this side quest. The only change is a new line in the list of what goes on the card, right under the heading line, asking for an `Illustration`. Following Fridge Chef? Replace your `_persona` with this. Made it your own in Step 7? Add a line like it to yours.
 
     ```dart
       // 4. YOUR idea: who the agent is, and what its UI looks like.
@@ -142,7 +142,9 @@ A component's builder can do anything a widget can, including calling another AI
 
 > 🎨 **Make it yours:** pick an art style that fits your app, such as pixel art, watercolor or a movie poster, and put it in the persona. Or let the user choose a style with a `ChoicePicker`.
 
-> **Stuck?** [`checkpoints/side_quest_b`](../checkpoints/side_quest_b/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays.
+> 💾 **Using Git?** `git diff` shows everything this step changed. Save it with `git add -A && git commit -m "Side Quest B: AI-Painted Dishes"`.
+
+> **Stuck?** [`checkpoints/side_quest_b`](../checkpoints/side_quest_b/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays. Cloned this repository? From your project folder, `git diff --no-index path/to/a2ui_workshop/checkpoints/side_quest_b/lib lib` shows every line where yours differs.
 
 ---
 

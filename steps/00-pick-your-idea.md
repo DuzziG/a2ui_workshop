@@ -2,11 +2,11 @@
 
 # Step 0: Pick Your Idea
 
-Before writing any code, decide what your app is. Write it down in one sentence: *"My app is a ___ that ___."* You will turn that sentence into your agent's personality in Step 3.
+Before writing any code, decide what your app *will* be. Write it down in one sentence: *"My app is a ___ that ___."* Keep it somewhere: in Step 7 you turn Fridge Chef into it.
 
 Pick an idea where the answer is **more than words**: something to pick, tick, slide or press, and that changes as you use it. That's where A2UI shines.
 
-All the examples in this guide build **Fridge Chef**: tell it (or show it) what's in your fridge, and Chef Pip suggests a dish, scales it to your servings and walks you through it with timers. Use it to follow along, but your app can be anything. Need ideas?
+Steps 1 to 6 build **Fridge Chef** together: tell it (or show it) what's in your fridge, and Chef Pip suggests a dish, scales it to your servings and walks you through it with timers. Following the same app means you can always compare your code with the guide and the checkpoints. Then, in Step 7, it becomes yours. Your app can be anything. Need ideas?
 
 | Idea | What the AI shows you |
 | ---- | --------------------- |
@@ -19,7 +19,7 @@ All the examples in this guide build **Fridge Chef**: tell it (or show it) what'
 | **Workout Coach** | A workout that fits your time and mood, with sets to tick off |
 | **Band Generator** | A band name, logo idea, setlist and tour poster |
 
-> 🎨 **Make it yours:** a mix of two ideas is often the most fun. A quiz show hosted by a pirate? A plant doctor that is also a dungeon?
+> 🎨 **Tip:** a mix of two ideas is often the most fun. A quiz show hosted by a pirate? A plant doctor that is also a dungeon?
 
 ---
 

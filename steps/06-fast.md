@@ -1,6 +1,6 @@
-[← Step 5: Your Own Component](05-your-own-component.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Side Quest A: Kitchen Tools →](side-quest-a-kitchen-tools.md)
+[← Step 5: Your Own Component](05-your-own-component.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 7: Make It Yours →](07-make-it-yours.md)
 
-*Part 4: Reliable and Fast · Step 6 of 6*
+*Part 4: Reliable and Fast · Step 6 of 7*
 
 # Step 6: Fast
 
@@ -57,7 +57,7 @@ Right now you wait for Gemini's whole reply, then everything appears at once. Tw
       }
     ```
 
-    Run it, ask for a dish and watch the card grow. Open X-ray and note the line at the top, such as `[2154 characters in 6.3 s]`.
+    Restart the app, ask for a dish and watch the card grow. Open X-ray and note the line at the top, such as `[2154 characters in 6.3 s]`.
 
 3.  **Switch to Express.** In part 3, change `const DirectJsonFormatFactory()` to `const ExpressFormatFactory()`. That's the whole change:
 
@@ -94,10 +94,12 @@ Compare the numbers at the top with the ones you noted: the same card in far few
 
 > 🧠 **What just happened:** each chunk Gemini streams is fed to the parser, which applies every message as soon as it is complete. Express even fills in texts word by word. It also made the model write less for the same UI, and fewer tokens means a faster, cheaper reply. `HomePage`, your catalog and your persona didn't change at all: the A2UI messages that reach the renderer are the same.
 
-> 🎨 **Make it yours:** look at your persona's layout with fresh eyes. The first component Gemini writes appears first, so put the exciting part at the top. Then try JSON and Express on your own idea, and see which one your app feels better with.
+> 🧪 **Try this:** the first component Gemini writes appears first. Move the heading line to the end of the persona's list, restart, and watch the card build in a different order. Put it back before you go on.
 
-> **Stuck?** [`checkpoints/step_06`](../checkpoints/step_06/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays.
+> 💾 **Using Git?** `git diff` shows everything this step changed. Save it with `git add -A && git commit -m "Step 6: Fast"`.
+
+> **Stuck?** [`checkpoints/step_06`](../checkpoints/step_06/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays. Cloned this repository? From your project folder, `git diff --no-index path/to/a2ui_workshop/checkpoints/step_06/lib lib` shows every line where yours differs.
 
 ---
 
-[← Step 5: Your Own Component](05-your-own-component.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Side Quest A: Kitchen Tools →](side-quest-a-kitchen-tools.md)
+[← Step 5: Your Own Component](05-your-own-component.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 7: Make It Yours →](07-make-it-yours.md)

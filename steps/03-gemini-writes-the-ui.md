@@ -1,6 +1,6 @@
 [← Step 2: A Recipe Card, by Hand](02-a-recipe-card-by-hand.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 4: Snap and Cook →](04-snap-and-cook.md)
 
-*Part 3: Hand the AI the Pen · Step 3 of 6*
+*Part 3: Hand the AI the Pen · Step 3 of 7*
 
 # Step 3: Gemini Writes the UI
 
@@ -214,18 +214,15 @@ The system message also gets a **persona**: who the agent is, and what its UI lo
       }
     ```
 
-Run it and **ask your question from Step 1 again**. This time you get a recipe card, with a slider for the servings and a button. Try a few more: *"Something sweet with bananas"*, *"Dinner for a rainy day"*. Then press the **X-ray** button `</>` and read the reply.
+Restart the app and **ask your question from Step 1 again**. This time you get a recipe card, with a slider for the servings and a button. Try a few more: *"Something sweet with bananas"*, *"Dinner for a rainy day"*. Then press the **X-ray** button `</>` and read the reply.
 
 > 🧠 **What just happened:** Gemini wrote the same kinds of messages you wrote in Step 2, wrapped in `<a2ui-json>` tags with some text around them. The prompt snippet taught it the format, your persona told it what to build, and your catalog limited it to components your app can draw. Compare it with the wall of text from Step 1: same question, same model, a much better answer.
 
-> 🎨 **Make it yours:** this is where your idea comes alive. Rewrite `_persona` from your sentence in Step 0. Give your agent:
-> * **a character**: a name, a voice, a quirk
-> * **a signature surface**: the card it always answers with, component by component
-> * **one button** with an action name, which we use in Step 4
->
-> Tip: describe the layout as a list, like the example. The more specific you are, the more consistent your app looks.
+> 🧪 **Try this:** change one line of the persona, such as "a Slider" to "a ChoicePicker with 1, 2, 4 and 6", or give Chef Pip a strong opinion about pineapple. Restart, ask again, and read the X-ray to see how Gemini followed it. In Step 7 you'll write a whole persona of your own.
 
-> **Stuck?** [`checkpoints/step_03`](../checkpoints/step_03/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays.
+> 💾 **Using Git?** `git diff` shows everything this step changed. Save it with `git add -A && git commit -m "Step 3: Gemini Writes the UI"`.
+
+> **Stuck?** [`checkpoints/step_03`](../checkpoints/step_03/lib) holds the whole `lib/` folder at the end of this step. Compare it with yours, or copy it over yours: your `lib/api_key.dart` isn't in it, so your key stays. Cloned this repository? From your project folder, `git diff --no-index path/to/a2ui_workshop/checkpoints/step_03/lib lib` shows every line where yours differs.
 
 ---
 
