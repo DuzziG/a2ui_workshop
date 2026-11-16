@@ -3,6 +3,7 @@ import 'package:a2ui_core/a2ui_core.dart';
 import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
 import 'agent_service.dart';
+import 'xray_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -18,6 +19,7 @@ class _HomePageState extends State<HomePage> {
   final List<SurfaceModel<ComponentImplementation>> _surfaces = [];
   String _reply = '';
   bool _isLoading = false;
+  bool _showXray = false;
 
   @override
   void initState() {
@@ -25,6 +27,15 @@ class _HomePageState extends State<HomePage> {
     // Whenever the processor creates or deletes a surface, update the screen.
     _agent.processor.model.onSurfaceCreated.subscribe((surface) => setState(() => _surfaces.add(surface)));
     _agent.processor.model.onSurfaceDeleted.subscribe((id) => setState(() => _surfaces.removeWhere((s) => s.id == id)));
+    // When a button inside a surface is pressed, the processor emits an action.
+    _agent.processor.model.onAction.subscribe(_showAction);
+  }
+
+  // For now, just show what the action carried.
+  void _showAction(A2uiRendererAction action) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Action "${action.name}" with ${action.context}')),
+    );
   }
 
   // Sends what the user typed to the agent.
@@ -63,8 +74,31 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(backgroundColor: colors.inversePrimary, title: Text(widget.title)),
-      body: _buildChat(context),
+      appBar: AppBar(
+        backgroundColor: colors.inversePrimary,
+        title: Text(widget.title),
+        actions: [
+          // X-ray: show the raw reply Gemini wrote.
+          IconButton(
+            icon: Icon(_showXray ? Icons.code_off : Icons.code),
+            onPressed: () => setState(() => _showXray = !_showXray),
+          ),
+        ],
+      ),
+      // X-ray off: just the chat. On a wide screen: the chat and the X-ray side by side.
+      // On a narrow screen: the X-ray fills the screen.
+      body: !_showXray
+          ? _buildChat(context)
+          : LayoutBuilder(
+              builder: (context, constraints) => constraints.maxWidth >= 800
+                  ? Row(
+                      children: [
+                        Expanded(child: _buildChat(context)),
+                        Expanded(child: XrayView(reply: _agent.lastRawReply)),
+                      ],
+                    )
+                  : XrayView(reply: _agent.lastRawReply),
+            ),
     );
   }
 
@@ -94,9 +128,9 @@ class _HomePageState extends State<HomePage> {
         if (_reply.isNotEmpty)
           Container(
             width: double.infinity,
+            constraints: const BoxConstraints(maxHeight: 240),
             color: colors.secondaryContainer,
-            padding: const EdgeInsets.all(12),
-            child: Text(_reply),
+            child: SingleChildScrollView(padding: const EdgeInsets.all(12), child: Text(_reply)),
           ),
         // 3. The prompt box.
         SafeArea(
