@@ -1,4 +1,4 @@
-[← Step 0: Pick Your Idea](00-pick-your-idea.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 2: A Recipe Card, by Hand →](02-a-recipe-card-by-hand.md)
+[Overview](../README.md) &nbsp;·&nbsp; [Step 2: A Recipe Card, by Hand →](02-a-recipe-card-by-hand.md)
 
 *Part 1: Set Up · Step 1 of 7*
 
@@ -281,4 +281,4 @@ Run the app with `flutter run -d chrome` (or pick another device with `flutter r
 
 ---
 
-[← Step 0: Pick Your Idea](00-pick-your-idea.md) &nbsp;·&nbsp; [Overview](../README.md) &nbsp;·&nbsp; [Step 2: A Recipe Card, by Hand →](02-a-recipe-card-by-hand.md)
+[Overview](../README.md) &nbsp;·&nbsp; [Step 2: A Recipe Card, by Hand →](02-a-recipe-card-by-hand.md)

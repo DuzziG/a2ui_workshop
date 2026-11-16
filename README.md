@@ -3,7 +3,7 @@
 
 In this workshop you build an app where an AI doesn't just answer with text: it answers with **real, interactive Flutter UI**. Cards, sliders, buttons, and in the end, components you design yourself.
 
-The app is **yours**. You pick an idea in Step 0, build the example app, **Fridge Chef**, step by step, and then turn it into your idea in Step 7. By the end, no two apps in the room will look alike.
+You build the example app, **Fridge Chef**, step by step: tell it (or show it) what's in your fridge, and Chef Pip suggests a dish, scales it to your servings and walks you through it with timers. Following the same app means you can always compare your code with the guide and the checkpoints. Then, in Step 7, you turn it into **your own idea**, so start thinking about what you'd build while you go. By the end, no two apps in the room will look alike.
 
 ## What is A2UI?
 
@@ -51,7 +51,6 @@ A2UI makes three promises, and this workshop puts each one to the test:
 
 Work through them in order, and restart the app after every step. Each one ends with a working app and a small **Try this** experiment, and in Step 7 the app becomes yours.
 
-* [Step 0: Pick Your Idea](steps/00-pick-your-idea.md)
 
 **Part 1: Set Up**
 
@@ -81,7 +80,7 @@ Work through them in order, and restart the app after every step. Each one ends 
 * [Side Quest B: AI-Painted Dishes](steps/side-quest-b-ai-painted-dishes.md)
 * [Side Quest C: A 3D Chef Companion](steps/side-quest-c-a-3d-chef-companion.md)
 
-**Ready? [Start with Step 0: Pick Your Idea →](steps/00-pick-your-idea.md)**
+**Ready? [Start with Step 1: Set Up Your App →](steps/01-set-up-your-app.md)**
 
 ---
 
