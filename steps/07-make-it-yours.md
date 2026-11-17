@@ -4,20 +4,39 @@
 
 # Step 7: Make It Yours
 
-> 🎯 **Goal:** turn Fridge Chef into the app from your sentence in Step 0.
+> 🎯 **Goal:** turn Fridge Chef into an app of your own idea.
 
-Everything an A2UI app needs is in place: the renderer, the loop, streaming, your own catalog. What makes Fridge Chef *Fridge Chef* is just three things: its **look**, its **persona** and its **component**. Swap those, and you have a new app.
+Everything an A2UI app needs is in place: the renderer, the loop, streaming, your own catalog. What makes Fridge Chef *Fridge Chef* is just three things: its **look**, its **persona** and its **component**. Pick your idea, swap those three, and you have a new app.
 
 > **Using Git?** Commit Fridge Chef first, so you can always look back at a version that works.
 
-### 1. The look
+### 1. Pick your idea
+
+Decide what your app is, and write it down in one sentence: *"My app is a ___ that ___."*
+
+Pick an idea where the answer is **more than words**: something to pick, tick, slide or press, and that changes as you use it. That's where A2UI shines. Need ideas?
+
+| Idea | What the AI shows you |
+| ---- | --------------------- |
+| **Dungeon Master** | Rooms, monsters and choices for a text adventure, with your health and inventory |
+| **Pet Simulator** | A virtual pet that gets hungry, bored and sleepy, with buttons to feed and play |
+| **Quiz Show Host** | Quiz cards on any topic, with a score and a dramatic host |
+| **Outfit Judge** | Show it a photo of your outfit, get a scorecard and a tip |
+| **Plant Doctor** | Show it a sad plant, get a diagnosis and a care plan with checkboxes |
+| **Travel Planner** | A day plan for any city, as a timeline you can reorder |
+| **Workout Coach** | A workout that fits your time and mood, with sets to tick off |
+| **Band Generator** | A band name, logo idea, setlist and tour poster |
+
+> 🎨 **Tip:** a mix of two ideas is often the most fun. A quiz show hosted by a pirate? A plant doctor that is also a dungeon?
+
+### 2. The look
 
 * In `lib/main.dart`, change the app's name (it appears twice) and pick a `seedColor` that fits your idea.
 * In `lib/home_page.dart`, change the prompt box's `hintText` and the *"Nothing here yet"* text.
 
-### 2. The persona
+### 3. The persona
 
-The persona in `lib/agent_service.dart` is a design brief. Rewrite it from your Step 0 sentence. Here's a template, with Fridge Chef's choices in brackets. Fill in the blanks, and delete what your app doesn't need:
+The persona in `lib/agent_service.dart` is a design brief. Rewrite it from your sentence in section 1. Here's a template, with Fridge Chef's choices in brackets. Fill in the blanks, and delete what your app doesn't need:
 
 ```text
 You are ___ [Chef Pip], a ___ [cheerful little chef] who ___ [hates wasting food].
@@ -45,7 +64,7 @@ Some tips:
 * **Keep the two lines about actions as they are**: the one that explains the JSON, and *"update the SAME surface"*. They make the loop from Step 4 work.
 * **Change the photo's meaning** in `sendPhoto` too: its text is the question that goes with every photo, such as *"Here is my outfit. Judge it."*
 
-### 3. The component
+### 4. The component
 
 Make the one widget that makes your app *yours*. Change the `CookingTimer` in `lib/my_catalog.dart` into it, or add a new component next to it in `components`. Some ideas:
 
@@ -56,7 +75,7 @@ Make the one widget that makes your app *yours*. Change the `CookingTimer` in `l
 
 For each property, write a description that tells Gemini what it means and what values make sense: Gemini only sees your schema. Then ask for it in the persona (the line with `CookingTimer` in it). To level up, bind a property to the data model, or let your component emit an action: read about `props.writable` and `props.action` in the [a2ui_flutter docs](https://pub.dev/packages/a2ui_flutter#defining-custom-components).
 
-### 4. Test it, and tune it
+### 5. Test it, and tune it
 
 Restart the app, try your idea, and keep the X-ray open. When Gemini doesn't do what you meant, the fix is almost always in the persona:
 
