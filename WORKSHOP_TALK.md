@@ -18,12 +18,12 @@ Students follow the step pages and copy the code from them. You don't need to re
 | Part | Time |
 | ---- | ---- |
 | Opening | 20 min |
-| Step 0 and Step 1: idea and set-up | 30 min |
+| Step 1: set-up | 25 min |
 | Step 2: a card by hand | 25 min |
 | Break | 10 min |
 | Step 3 and Step 4: the AI takes over | 40 min |
 | Step 5 and Step 6: reliable and fast | 35 min |
-| Step 7: make it yours | 25 min |
+| Step 7: pick your idea and make it yours | 35 min |
 | Show and tell, and closing | 25 min |
 
 ---
@@ -114,23 +114,13 @@ Students follow the step pages and copy the code from them. You don't need to re
 
 > Here's how today goes. First, set-up: we create the app and connect it to the AI. Then we write one card by hand, so you learn the language. Then the AI takes over the writing. Then we make it reliable and fast. And at the end, you turn it into your own app.
 
+> We'll all build the same example app: **Fridge Chef**. You tell it, or show it, what's in your fridge, and Chef Pip suggests a dish. Building the same app means you can always compare your work with the guide. In Step 7, you turn it into your own idea, so start thinking about what you'd build while we go.
+
 > Every step ends with an app that works. If you fall behind, each step has a **checkpoint**: a copy of the finished code you can paste over yours.
 
 ---
 
 ## Part 1: Set Up
-
-### Step 0: Pick Your Idea (5 min)
-
-> Before any code, think about what your app could be. Write one sentence: "My app is a ___ that ___." For example: "My app is a plant doctor that tells me what's wrong with my plant."
-
-> We'll all build the same example first: **Fridge Chef**. You tell it, or show it, what's in your fridge, and Chef Pip suggests a dish. Building the same app means you can always compare your work with the guide. In Step 7, you swap in your own idea.
-
-> A good idea is one where the answer is **more than words**: something to tap, tick, slide or press. Look at the table on the page for ideas. Mixing two is often the most fun: a quiz show hosted by a pirate?
-
-**Check the room:** ask two or three people to read their sentence out loud.
-
-**Move on:** "Keep your sentence somewhere. Now let's build."
 
 ### Step 1: Set Up Your App (25 min)
 
@@ -374,9 +364,9 @@ Students follow the step pages and copy the code from them. You don't need to re
 
 ## Part 5: Make It Yours
 
-### Step 7: Make It Yours (25 min)
+### Step 7: Make It Yours (35 min)
 
-**Key message:** change three things, the look, the persona and the component, and you have a brand-new app.
+**Key message:** pick your idea, change three things, the look, the persona and the component, and you have a brand-new app.
 
 > Everything an A2UI app needs is already working: the loop, the photos, the menu, the streaming. What makes Fridge Chef *Fridge Chef* is only three things.
 
@@ -384,7 +374,19 @@ Students follow the step pages and copy the code from them. You don't need to re
 2. **The persona:** the character and the design brief.
 3. **The component:** your one special piece.
 
-> Swap those, and it's a different app. Get out your sentence from Step 0.
+> Swap those, and it's a different app. But first, you need an idea.
+
+#### Pick Your Idea
+
+> Write your idea in one sentence: "My app is a ___ that ___." For example: "My app is a plant doctor that tells me what's wrong with my plant."
+
+> A good idea is one where the answer is **more than words**: something to tap, tick, slide or press, and that changes as you use it. That's where A2UI shines. Look at the table on the page for ideas: a dungeon master, a pet simulator, a quiz show, an outfit judge. Mixing two is often the most fun: a quiz show hosted by a pirate?
+
+**Check the room:** ask two or three people to read their sentence out loud. Help anyone whose idea is only text to add something to tap or slide.
+
+#### Swap the Three Things
+
+> Now turn your sentence into the app. Start with the look, then the persona, then your component.
 
 **Do:** walk through the persona template on the page. Fill in the blanks for a quick example idea, live.
 
@@ -472,7 +474,7 @@ For people who finish early. They don't depend on each other, so pick any.
 
 ### Show and Tell (15 min)
 
-> Who wants to show their app? Tell us your sentence from Step 0, and show us your special piece.
+> Who wants to show their app? Tell us your idea in one sentence, and show us your special piece.
 
 **Do:** invite three or four people to the projector. Point out how different the apps are, from the same steps.
 
