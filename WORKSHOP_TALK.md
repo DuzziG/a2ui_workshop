@@ -36,7 +36,7 @@ Students follow the step pages and copy the code from them. You don't need to re
 * Test your Gemini key on the venue Wi-Fi.
 * Keep a photo of a fridge on your laptop for the demo.
 * Write the repository link where everyone can see it.
-* Open [Troubleshooting](TROUBLESHOOTING.md) in a tab. Most early problems are entries 1 to 3.
+* Open [Troubleshooting](TROUBLESHOOTING.md) in a tab. Most early problems are entries 1 to 3. After Step 4, look at entry 7.
 
 ---
 
@@ -297,11 +297,17 @@ Students follow the step pages and copy the code from them. You don't need to re
 
 > And notice: Gemini never had to ask "how many people are eating?" The slider already wrote it on the card's notepad, and the button took it along.
 
+**In plain words:** a card is **created once, then only changed**. Think of a whiteboard: you put it up once, and after that you only rub out and rewrite what's on it. If Gemini tries to put up the same whiteboard a second time, the app refuses, and says "Surface … already exists". That's why our persona says: "update the SAME surface. It already exists, so never create it again."
+
 **Do:** send a photo of a fridge. Move the slider to 4. Press **Cook this**. The card changes in place. Show the update in the X-ray.
 
 **Check the room:** "Press Cook with the slider on 1, then ask again and press it on 8. Do the amounts change?"
 
-**If someone is stuck:** Gemini makes a new card instead of changing the old one: the persona must say "update the SAME surface". On iPhone or Mac, photos need a permission setting: Chrome is easiest.
+**If someone is stuck:**
+
+* The card doesn't change, and the reply says *"Gemini wrote UI I could not draw: Surface … already exists"*: Gemini tried to create the card again. Check the persona has the new line, "It already exists, so never create it again: only send its new components", then restart. See Troubleshooting 7.
+* Gemini makes a new card instead of changing the old one: same fix, the persona must say "update the SAME surface".
+* On iPhone or Mac, photos need a permission setting: Chrome is easiest.
 
 **Try this together:** send a photo that isn't food, like your shoes. What does Chef Pip do?
 
@@ -348,7 +354,7 @@ Students follow the step pages and copy the code from them. You don't need to re
 **In plain words:**
 
 * **Streaming:** instead of waiting for the whole answer, we show each piece as it arrives. Like watching someone type, instead of waiting for the full letter. This is why the flat list from Step 2 matters: each piece can be drawn as soon as it's complete.
-* **A2UI Express:** a shorter way for the AI to write the same card. Like writing in shorthand. The package translates it back, so the rest of the app doesn't change at all.
+* **A2UI Express:** a shorter way for the AI to write the same card. Like writing in shorthand. The package translates it back, so the rest of the app doesn't change at all. A bonus: Express keeps track of which cards already exist, and only updates them, so it avoids the "already exists" error from Step 4 by itself.
 
 > Fewer words to write means a faster answer, and a cheaper one: AI services charge by how much the AI reads and writes.
 
@@ -393,7 +399,7 @@ Students follow the step pages and copy the code from them. You don't need to re
 **Tips to share:**
 
 * **Describe the card as a list**, piece by piece. Vague briefs give random screens.
-* **Keep the two lines about button presses.** They make the loop work.
+* **Keep the lines about button presses as they are**, especially "update the SAME surface. It already exists, so never create it again". They make the loop work.
 * **Change what a photo means**: in an outfit judge, the photo is the outfit.
 * **Your component:** start from the timer and change it. A health bar, a mood meter, a dice face, a star rating.
 * **Write good descriptions.** The AI only knows what your description tells it.

@@ -215,7 +215,7 @@ running in Chrome, with the X-ray view ready.</li>
 <li>Keep a photo of a fridge on your laptop for the demo.</li>
 <li>Write the repository link where everyone can see it.</li>
 <li>Open <a href="TROUBLESHOOTING.md">Troubleshooting</a> in a tab. Most
-early problems are entries 1 to 3.</li>
+early problems are entries 1 to 3. After Step 4, look at entry 7.</li>
 </ul>
 <hr />
 </section>
@@ -694,15 +694,29 @@ amounts for 4 people.</p>
 slider already wrote it on the card's notepad, and the button took it
 along.</p>
 </blockquote>
+<p><strong>In plain words:</strong> a card is <strong>created once, then
+only changed</strong>. Think of a whiteboard: you put it up once, and
+after that you only rub out and rewrite what's on it. If Gemini tries to
+put up the same whiteboard a second time, the app refuses, and says
+"Surface … already exists". That's why our persona says: "update the
+SAME surface. It already exists, so never create it again."</p>
 <p><strong>Do:</strong> send a photo of a fridge. Move the slider to 4.
 Press <strong>Cook this</strong>. The card changes in place. Show the
 update in the X-ray.</p>
 <p><strong>Check the room:</strong> "Press Cook with the slider on 1,
 then ask again and press it on 8. Do the amounts change?"</p>
-<p><strong>If someone is stuck:</strong> Gemini makes a new card instead
-of changing the old one: the persona must say "update the SAME surface".
-On iPhone or Mac, photos need a permission setting: Chrome is
-easiest.</p>
+<p><strong>If someone is stuck:</strong></p>
+<ul>
+<li>The card doesn't change, and the reply says <em>"Gemini wrote UI I
+could not draw: Surface … already exists"</em>: Gemini tried to create
+the card again. Check the persona has the new line, "It already exists,
+so never create it again: only send its new components", then restart.
+See Troubleshooting 7.</li>
+<li>Gemini makes a new card instead of changing the old one: same fix,
+the persona must say "update the SAME surface".</li>
+<li>On iPhone or Mac, photos need a permission setting: Chrome is
+easiest.</li>
+</ul>
 <p><strong>Try this together:</strong> send a photo that isn't food,
 like your shoes. What does Chef Pip do?</p>
 <p><strong>Move on:</strong> "It works, and it's fun. But can we trust
@@ -782,7 +796,9 @@ waiting for the full letter. This is why the flat list from Step 2
 matters: each piece can be drawn as soon as it's complete.</li>
 <li><strong>A2UI Express:</strong> a shorter way for the AI to write the
 same card. Like writing in shorthand. The package translates it back, so
-the rest of the app doesn't change at all.</li>
+the rest of the app doesn't change at all. A bonus: Express keeps track
+of which cards already exist, and only updates them, so it avoids the
+"already exists" error from Step 4 by itself.</li>
 </ul>
 <blockquote>
 <p>Fewer words to write means a faster answer, and a cheaper one: AI
@@ -858,8 +874,9 @@ Fill in the blanks for a quick example idea, live.</p>
 <ul>
 <li><strong>Describe the card as a list</strong>, piece by piece. Vague
 briefs give random screens.</li>
-<li><strong>Keep the two lines about button presses.</strong> They make
-the loop work.</li>
+<li><strong>Keep the lines about button presses as they are</strong>,
+especially "update the SAME surface. It already exists, so never create
+it again". They make the loop work.</li>
 <li><strong>Change what a photo means</strong>: in an outfit judge, the
 photo is the outfit.</li>
 <li><strong>Your component:</strong> start from the timer and change it.
