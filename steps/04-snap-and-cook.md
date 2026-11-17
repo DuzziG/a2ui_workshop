@@ -64,9 +64,9 @@ Two things turn the chat into an app.
 
     When the user presses a button, the next user turn is JSON: {"messages": [...]} with an action,
     its name, the surfaceId of its surface, and its context.
-    Answer a "cook" action with one encouraging sentence, and update the SAME surface, using its surfaceId again:
-    replace what is inside the Card with the dish's name as a "## " heading, the ingredients with every amount
-    scaled to the servings in the context, and the steps as a numbered List of Text. Do not create a new surface for it.
+    Answer a "cook" action with one encouraging sentence, and update the SAME surface. It already exists, so never create it again:
+    only send its new components, with its surfaceId. Replace what is inside the Card with the dish's name as a "## " heading, the ingredients with every amount
+    scaled to the servings in the context, and the steps as a numbered List of Text.
     ''';
 
       // 5. Gemini, reached with your API key.
@@ -193,7 +193,7 @@ The message Gemini receives when you press the button looks like this:
 
 > 📖 **In the A2UI docs:** [actions](https://a2ui.org/concepts/actions/) explains events like `cook`, and the functions that run in the app without going to the agent.
 
-> 🧠 **What just happened:** you built the full A2UI loop. Gemini describes UI, the user acts on it, the action goes back, and Gemini updates the UI. The `servings` in the context came from the slider, through the data model: Gemini never had to ask how many people are eating. And it updated the surface it already had instead of creating a new one, because your persona told it to.
+> 🧠 **What just happened:** you built the full A2UI loop. Gemini describes UI, the user acts on it, the action goes back, and Gemini updates the UI. The `servings` in the context came from the slider, through the data model: Gemini never had to ask how many people are eating. And it updated the surface it already had instead of creating a new one, because your persona told it to. A surface is created once, and only updated after that: creating it again is an error, and the app tells you *"Surface … already exists"*.
 
 > 🧪 **Try this:** send a photo that isn't food at all, like your shoes. What does Chef Pip do? Then press **Cook this** with the slider on 1 and on 8, and compare the amounts.
 
