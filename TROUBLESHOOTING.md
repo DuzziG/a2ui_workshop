@@ -57,9 +57,25 @@ Each entry gives the step, what you see, why it happens and how to fix it.
 
 **Fix:** **hot restart**: press `R` in the terminal where `flutter run` runs, or the restart button in your editor. After every step, restart. Still red after a restart? Read the first line of the error: it names the widget or the value that broke. Then compare your files with the step's checkpoint.
 
+## 7. `Gemini wrote UI I could not draw: Surface … already exists.`
+
+**Step:** [4, Snap and Cook](steps/04-snap-and-cook.md) and later, after pressing a button such as **Cook this**
+
+**Why:** Gemini sent `createSurface` again for a card that's already on screen, instead of only sending its new components. In A2UI, a surface is created once and then only updated: creating it again is an error, so the whole update is rejected and the card stays as it was.
+
+**Fix:** make sure your persona says *"update the SAME surface. It already exists, so never create it again: only send its new components, with its surfaceId."* Then restart the app. From [Step 6](steps/06-fast.md) on, Express handles this by itself: it knows which surfaces exist, and only updates them.
+
 ---
 
 # Found While Testing
+
+## `Surface … already exists` after pressing Cook this
+
+**Step:** [4, Snap and Cook](steps/04-snap-and-cook.md), during the first dry run
+
+**What happened:** after **Cook this**, the reply said `Gemini wrote UI I could not draw: Surface surface-spinach-feta-omelette already exists.`, and the card didn't change into the steps.
+
+**Cause and fix:** the persona said *"update the SAME surface, using its surfaceId again"*, and Gemini read that as "create it again with the same id". The persona now says it already exists and must not be created again. See [7](#7-gemini-wrote-ui-i-could-not-draw-surface--already-exists) above.
 
 ## A red error screen at Step 3
 

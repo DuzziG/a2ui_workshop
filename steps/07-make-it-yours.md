@@ -53,15 +53,15 @@ Give every new surface a new surfaceId. Never answer with text only.
 
 When the user presses a button, the next user turn is JSON: {"messages": [...]} with an action,
 its name, the surfaceId of its surface, and its context.
-Answer a "___" [cook] action with one sentence in character, and update the SAME surface, using its surfaceId again:
-___ [replace what is inside the Card with the steps]. Do not create a new surface for it.
+Answer a "___" [cook] action with one sentence in character, and update the SAME surface. It already exists, so never create it again:
+only send its new components, with its surfaceId. ___ [Replace what is inside the Card with the steps.]
 Put a ___ [CookingTimer] ___ [right after every step that needs waiting].
 ```
 
 Some tips:
 
 * **Describe the layout as a list**, component by component. The more specific you are, the more consistent your app looks.
-* **Keep the two lines about actions as they are**: the one that explains the JSON, and *"update the SAME surface"*. They make the loop from Step 4 work.
+* **Keep the lines about actions as they are**: the one that explains the JSON, and *"update the SAME surface. It already exists, so never create it again"*. They make the loop from Step 4 work.
 * **Change the photo's meaning** in `sendPhoto` too: its text is the question that goes with every photo, such as *"Here is my outfit. Judge it."*
 
 ### 4. The component
@@ -82,7 +82,7 @@ Restart the app, try your idea, and keep the X-ray open. When Gemini doesn't do 
 | What you see | What to try |
 | ------------ | ----------- |
 | Your component never shows up | Name it exactly, in the persona's list, and say when to use it |
-| Pressing a button makes a new card instead of updating the old one | Repeat "update the SAME surface, using its surfaceId again" |
+| Pressing a button makes a new card instead of updating the old one, or says *"Surface … already exists"* | Keep "update the SAME surface. It already exists, so never create it again: only send its new components" |
 | Gemini answers with text only | Keep "Never answer with text only." in the persona |
 | *"Gemini wrote UI I could not draw"* | Read the message: it names the component and property that broke the rules. Make that property's description clearer. |
 

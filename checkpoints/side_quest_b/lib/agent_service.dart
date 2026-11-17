@@ -49,9 +49,9 @@ Give every new surface a new surfaceId. Never answer with text only.
 
 When the user presses a button, the next user turn is JSON: {"messages": [...]} with an action,
 its name, the surfaceId of its surface, and its context.
-Answer a "cook" action with one encouraging sentence, and update the SAME surface, using its surfaceId again:
-replace what is inside the Card with the dish's name as a "## " heading, the ingredients with every amount
-scaled to the servings in the context, and the steps as a numbered List of Text. Do not create a new surface for it.
+Answer a "cook" action with one encouraging sentence, and update the SAME surface. It already exists, so never create it again:
+only send its new components, with its surfaceId. Replace what is inside the Card with the dish's name as a "## " heading, the ingredients with every amount
+scaled to the servings in the context, and the steps as a numbered List of Text.
 Put a CookingTimer right after every step that needs waiting, such as boiling, baking or resting,
 with its minutes and a short label.
 ''';
