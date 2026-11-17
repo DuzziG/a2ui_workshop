@@ -24,6 +24,8 @@ A2UI makes three promises, and this workshop puts each one to the test:
 * **Reliable:** the agent never sends code. It can only use the components in your **catalog**, and anything else is rejected before it's drawn.
 * **Fast:** surfaces stream in while the AI is still writing them, and **A2UI Express**, a compact way of writing them, makes replies shorter.
 
+> 📖 **Read more:** [A2UI 1.0: Build delightful, fast, reliable, agentic experiences](https://developers.googleblog.com/a2ui-10-build-delightful-fast-reliable-agentic-experiences/), the launch post on the Google Developers Blog, is where these three promises come from. For the docs, see [a2ui.org](https://a2ui.org/): the [v1.0 specification](https://a2ui.org/specification/v1.0-a2ui/), the [basic catalog guide](https://a2ui.org/specification/v1.0-basic-catalog-implementation-guide/) (every component and its properties) and [actions](https://a2ui.org/concepts/actions/).
+
 ## What you will learn
 
 * **Part 1, Set up:** a Flutter app with the A2UI packages, chatting with Gemini in plain text.
@@ -44,6 +46,7 @@ A2UI makes three promises, and this workshop puts each one to the test:
 * **Flutter SDK 3.38 or newer** (Dart 3.10 or newer). Run `flutter upgrade` to get the latest stable version.
 * **Somewhere to run it:** we recommend **Chrome**, which needs no extra setup. You can also run on a phone or as a desktop app: for iOS and macOS you need Xcode, and for Android you need Android Studio.
 * **A Google account**, to get a free Gemini API key in Step 1.
+* **Optional:** skim the [A2UI 1.0 launch post](https://developers.googleblog.com/a2ui-10-build-delightful-fast-reliable-agentic-experiences/) and [a2ui.org](https://a2ui.org/), to see where you're heading.
 
 ---
 
@@ -90,6 +93,7 @@ You now have an app that nobody else has: your idea, your persona and your own c
 
 ## Going Further
 
+* [A2UI 1.0 launch post](https://developers.googleblog.com/a2ui-10-build-delightful-fast-reliable-agentic-experiences/): why A2UI exists, and what's new in 1.0
 * [a2ui.org](https://a2ui.org/): the A2UI protocol, with the [v1.0 specification](https://a2ui.org/specification/v1.0-a2ui/), the [basic catalog guide](https://a2ui.org/specification/v1.0-basic-catalog-implementation-guide/) and [actions](https://a2ui.org/concepts/actions/)
 * [`a2ui_flutter`](https://pub.dev/packages/a2ui_flutter): Markdown in texts, interactive custom components, and the v0.9 protocol
 * [`a2ui_agent`](https://pub.dev/packages/a2ui_agent): more on Express, trimming a catalog, and running the agent on a Dart server
